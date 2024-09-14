@@ -1,0 +1,392 @@
+/* Global styles */
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #2c3e50;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Playlist */
+.playlist {
+  list-style-type: none;
+  padding: 20px;
+  margin: 0 auto;
+  background-color: #2c3e50;
+  height: 100%;
+  overflow-y: auto;
+  width: 70%;
+}
+
+.playlist li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #34495e;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, filter 0.3s ease;
+  filter: blur(0.5px); /* Blurred effect for non-playing songs */
+  position: relative; /* Positioning context for centering artist */
+}
+
+.playlist li.playing {
+  background-color: #3498db;
+  filter: none;
+  color: white;
+  font-weight: bold;
+}
+
+.playlist li:hover:not(.playing) {
+  background-color: #3498db;
+  filter: none;
+}
+
+/* Track Duration */
+.track-duration {
+  font-size: 14px;
+  color: #bdc3c7;
+  white-space: nowrap; /* Prevent duration from wrapping */
+  margin-left: auto;
+  text-align: right;
+}
+
+.track-title {
+  flex: 1;
+  margin-right: 10px; /* Space between title and artist */
+  text-align: left; /* Align title to the left */
+  color: rgb(176, 70, 70);
+}
+
+/* Artist */
+.artist {
+  color: burlywood;
+  font-size: 16px;
+  text-align: justify; /* Center align artist */
+  margin: 0 10px; /* Space between artist and duration */
+  white-space: nowrap; /* Prevent artist name from wrapping */
+  flex: 1; /*  Allow the artist name to take up available space */
+}
+
+.playlist li span {
+  display: flex;
+  align-items: center;
+}
+
+/* Music Player */
+.music-player {
+  background-color: #34495e;
+  padding: 20px;
+  box-shadow: 0px -10px 20px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  z-index: 1;
+  box-sizing: border-box;
+}
+
+.player-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Align items from start and end */
+  flex-wrap: wrap;
+  max-width: 1200px; /* Max width for the content */
+  margin: 0 auto;
+}
+
+/* Track Image */
+.track-image-container {
+  flex: 0 0 20%; /* Take 20% of the width */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+
+.track-image-container img {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  border: 2px solid #3498db;
+}
+
+/* Control Buttons and Timer */
+.controls-and-timer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 10px;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.control-btn {
+  font-size: 20px;
+  background-color: transparent;
+  color: #ecf0f1;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.control-btn.active {
+  border-radius: 25%;
+  color: #3498db;
+  transform: scale(1.1);
+}
+
+.control-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Play Pause Button */
+#play-pause-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative; /* Ensure the icons are positioned correctly inside the button */
+  font-size: 24px; /* Ensure both icons have the same font size */
+  display: inline-block;
+  width: 40px; /* Set a fixed width */
+  height: 40px; /* Set a fixed height */
+}
+
+#play-pause-btn i {
+  position: absolute; /* Stack the icons on top of each other */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease; /* Smooth transition */
+}
+
+.fa-play {
+  opacity: 0; /* Hide play icon by default */
+}
+
+.fa-pause {
+  opacity: 1; /* Show pause icon by default */
+  color: #3498db;
+}
+
+#play-pause-btn.active .fa-play {
+  opacity: 1; /* Show play icon when active */
+  color: #ffffff;
+}
+
+#play-pause-btn.active .fa-pause {
+  opacity: 0; /* Hide pause icon when active */
+}
+
+/* Seek Bar */
+.seek-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Ensure seek-bar and volume control are in one line */
+  width: 100%;
+  margin: 10px 0;
+}
+
+.seek-bar {
+  flex: 1; /* Allow the seek-bar to grow and take up remaining space */
+  margin: 0 10px; /* Space around the seek-bar */
+}
+
+#current-time {
+  flex: 0 0 auto; /* Prevent from growing or shrinking */
+  color: aquamarine;
+}
+
+#duration-time {
+  flex: 0 0 auto; /* Prevent from growing or shrinking */
+  color: aquamarine;
+}
+
+.seek-bar.horizontal {
+  width: 100%;
+  height: 90%;
+  background-color: #ecf0f1;
+  border-radius: 5px;
+  margin: 0.4rem 1rem;
+}
+
+.seek-bar.horizontal::-webkit-slider-thumb {
+  appearance: none;
+  height: 10px;
+  width: 10px;
+  background-color: #3498db;
+  border-radius: 50%;
+  cursor: grab;
+}
+
+.time-info {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Volume Control */
+.volume-control {
+  flex: 0 0 6%; /* Take 6% of the width */
+}
+
+.volume-bar {
+  writing-mode: bt-lr;
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 10px;
+  background-color: #ffffff;
+}
+
+.volume-bar::-webkit-slider-thumb {
+  appearance: none;
+  height: 100%;
+  width: 100%;
+  background-color: #3498db;
+  border-radius: 50%;
+  cursor: grab;
+}
+
+/* Track Info */
+.track-info {
+  flex: 0 0 20%; /* Take 20% of the width */
+  text-align: center;
+}
+
+.track-info h2 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.track-info h3 {
+  font-size: 14px;
+  color: #bdc3c7;
+}
+
+/* Responsive Design */
+/* Responsive Design for devices with width between 500px and 800px */
+@media (max-width: 800px) and (min-width: 500px) {
+  .player-content {
+    /* display: grid;
+        grid-template-columns: repeat(2, 1fr); */
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .track-image-container {
+    width: 30%; /* Adjust width as needed */
+    margin-bottom: 10px;
+  }
+
+  .track-info {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    align-items: center;
+    margin: 3px;
+  }
+
+  .controls-and-timer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .seek-container {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+  }
+
+  .seek-bar.horizontal {
+    width: 70%; /* Adjust width as needed */
+  }
+
+  .volume-control {
+    flex: 0 0 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    rotate: 90deg;
+  }
+
+  .volume-bar {
+    width: 30vw; /* Adjust width as needed */
+    height: 8px; /* Adjust height as needed */
+  }
+  .buttons-container {
+    margin: 10px 0px;
+  }
+}
+
+@media (max-width: 500px) {
+  .player-content {
+    flex-direction: column;
+    align-items: center;
+  }
+  .music-player {
+    padding: 10px;
+    height: 30vh;
+  }
+  .track-image-container {
+    margin: 3px;
+  }
+  .track-image-container img {
+    border-radius: 50%;
+    box-shadow: 1px 1px 10px #3498db;
+  }
+  .playlist li span {
+    font-size: 13px;
+  }
+  .controls-and-timer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .seek-container {
+    align-items: center;
+    width: 100%;
+  }
+
+  .seek-bar.horizontal {
+    width: 70%;
+  }
+
+  .volume-bar {
+    width: 35vw;
+    height: 8px;
+    rotate: 90deg;
+    margin-bottom: 2px;
+  }
+  .track-info {
+    display: none;
+  }
+  .time-info {
+    margin: 0px 30px;
+  }
+  .buttons-container {
+    margin: 10px 0px;
+  }
+}
