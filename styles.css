@@ -1,9 +1,8 @@
-/* Global styles */
 body {
   font-family: "Roboto", sans-serif;
-  background-color: #2c3e50;
+  background-color: #b61977;
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: flex-start;
   height: 100vh;
   margin: 0;
@@ -16,15 +15,71 @@ body {
   flex-direction: column;
 }
 
+.sidebar {
+  width: 20vw;
+  padding: 20px;
+  float: left;
+  height: 70%;
+}
+.playlist-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;  /* To evenly space the items */
+  height: 100%;  /* Ensure it takes the full height of the parent container */
+}
+
+/* Common styles for all list items */
+.playlist-list li {
+  padding: 15px;
+  margin: 10px 0;
+  text-align: center;
+  cursor: pointer;
+  width: 50%;
+  height: auto;   /* Make it take up 80% of the container's width */
+  aspect-ratio: 1;  /* Remove aspect ratio constraint */
+  /* flex-grow: 1;  Allow each item to grow and fill the available space */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  position: relative;
+  background-color: #ffb6c1; /* Light pink */
+  box-shadow: 5px 5px 3px #ff6347;
+}
+.playlist-list li:hover{
+  transform: scale(1.1);
+  transition: all 0.5s ease;
+  background-color: #ffb6c1; /* Light pink */
+  box-shadow: 5px 5px 3px #ff6347;
+}
+
+.playlist-list li.active {
+  transform: scale(1.1); /* Makes the active playlist larger */
+  background-color: #beef00; /* Change the background to highlight the active playlist */
+  border-radius: 10px;
+  box-shadow: 5px 5px 3px rgb(0, 0, 0, 0.15);
+  transition: all 0.3s ease; /* Smooth transition for scaling and background */
+}
+
+.playlist-title {
+  font-weight: bold;
+  font-size: 16px;
+}
+
 /* Playlist */
 .playlist {
-  list-style-type: none;
+  /* list-style-type: none; */
   padding: 20px;
-  margin: 0 auto;
-  background-color: #2c3e50;
+  margin: 3vh auto;
+  background-color: #b61977;
   height: 100%;
   overflow-y: auto;
   width: 70%;
+  max-height: 70vh;
 }
 
 .playlist li {
@@ -32,31 +87,31 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 10px;
-  background-color: #34495e;
-  border-radius: 8px;
+  border-bottom: 2px solid #ffffff;
+  border-radius: 5px;
   margin-bottom: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease, filter 0.3s ease;
-  filter: blur(0.5px); /* Blurred effect for non-playing songs */
+  filter: blur(0.2px);
   position: relative; /* Positioning context for centering artist */
 }
 
 .playlist li.playing {
-  background-color: #3498db;
+  background-color: #930f65;
+  /* background-color: #f92c85; */
+  border-radius: 8px;
   filter: none;
-  color: white;
   font-weight: bold;
 }
 
 .playlist li:hover:not(.playing) {
-  background-color: #3498db;
+  background-color: #a2116f;
   filter: none;
 }
-
 /* Track Duration */
 .track-duration {
   font-size: 14px;
-  color: #bdc3c7;
+  color: #DDD0C8;
   white-space: nowrap; /* Prevent duration from wrapping */
   margin-left: auto;
   text-align: right;
@@ -66,12 +121,13 @@ body {
   flex: 1;
   margin-right: 10px; /* Space between title and artist */
   text-align: left; /* Align title to the left */
-  color: rgb(176, 70, 70);
+  color: #FFEB3B;
+  font-weight: 600;
 }
 
 /* Artist */
 .artist {
-  color: burlywood;
+  color: rgb(242, 195, 133);
   font-size: 16px;
   text-align: justify; /* Center align artist */
   margin: 0 10px; /* Space between artist and duration */
@@ -86,7 +142,8 @@ body {
 
 /* Music Player */
 .music-player {
-  background-color: #34495e;
+  background-color: #930f65;
+  /* background-color:#970747; */
   padding: 20px;
   box-shadow: 0px -10px 20px rgba(0, 0, 0, 0.3);
   position: fixed;
@@ -107,28 +164,40 @@ body {
 
 /* Track Image */
 .track-image-container {
-  flex: 0 0 20%; /* Take 20% of the width */
+  flex: 0 0 12%; /* Take 12% of the width */
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 20px;
+  /* margin-right: 20px; */
+}
+
+@keyframes flexible {
+	
+	75% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scaleX(1);
+	}
 }
 
 .track-image-container img {
   width: 100px;
   height: 100px;
   border-radius: 10px;
-  border: 2px solid #3498db;
+  border: 2px solid #DDD0C8;
+  /* */
 }
 
 /* Control Buttons and Timer */
 .controls-and-timer {
   flex: 1;
   display: flex;
+  /* flex: 0 0 40%; */
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 10px;
+  margin: 0 20px;
 }
 
 .buttons-container {
@@ -244,7 +313,7 @@ body {
 
 /* Volume Control */
 .volume-control {
-  flex: 0 0 6%; /* Take 6% of the width */
+  flex: 0 0 8%; /* Take 8% of the width */
 }
 
 .volume-bar {
@@ -266,8 +335,9 @@ body {
 
 /* Track Info */
 .track-info {
-  flex: 0 0 20%; /* Take 20% of the width */
+  flex: 0 0 20%; /* Take 10% of the width */
   text-align: center;
+  padding: 2px 15px;
 }
 
 .track-info h2 {
@@ -279,114 +349,4 @@ body {
 .track-info h3 {
   font-size: 14px;
   color: #bdc3c7;
-}
-
-/* Responsive Design */
-/* Responsive Design for devices with width between 500px and 800px */
-@media (max-width: 800px) and (min-width: 500px) {
-  .player-content {
-    /* display: grid;
-        grid-template-columns: repeat(2, 1fr); */
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .track-image-container {
-    width: 30%; /* Adjust width as needed */
-    margin-bottom: 10px;
-  }
-
-  .track-info {
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    align-items: center;
-    margin: 3px;
-  }
-
-  .controls-and-timer {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .seek-container {
-    flex-direction: row;
-    align-items: center;
-    width: 100%;
-  }
-
-  .seek-bar.horizontal {
-    width: 70%; /* Adjust width as needed */
-  }
-
-  .volume-control {
-    flex: 0 0 30%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    rotate: 90deg;
-  }
-
-  .volume-bar {
-    width: 30vw; /* Adjust width as needed */
-    height: 8px; /* Adjust height as needed */
-  }
-  .buttons-container {
-    margin: 10px 0px;
-  }
-}
-
-@media (max-width: 500px) {
-  .player-content {
-    flex-direction: column;
-    align-items: center;
-  }
-  .music-player {
-    padding: 10px;
-    height: 30vh;
-  }
-  .track-image-container {
-    margin: 3px;
-  }
-  .track-image-container img {
-    border-radius: 50%;
-    box-shadow: 1px 1px 10px #3498db;
-  }
-  .playlist li span {
-    font-size: 13px;
-  }
-  .controls-and-timer {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .seek-container {
-    align-items: center;
-    width: 100%;
-  }
-
-  .seek-bar.horizontal {
-    width: 70%;
-  }
-
-  .volume-bar {
-    width: 35vw;
-    height: 8px;
-    rotate: 90deg;
-    margin-bottom: 2px;
-  }
-  .track-info {
-    display: none;
-  }
-  .time-info {
-    margin: 0px 30px;
-  }
-  .buttons-container {
-    margin: 10px 0px;
-  }
 }
