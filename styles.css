@@ -1,352 +1,515 @@
-body {
-  font-family: "Roboto", sans-serif;
-  background-color: #b61977;
-  display: flex;
-  /* justify-content: center; */
-  align-items: flex-start;
-  height: 100vh;
+/* ===== VARIABLES ===== */
+:root {
+  --primary-color: #FD3DB5;     /* Bright Pink */
+  --secondary-color: #8C1946;   /* Burgundy */
+  --background-color: #1e1219;  /* Dark background for contrast */
+  --text-color: #ffffff;
+  --accent-color: #FD3DB5;      /* Bright Pink */
+  --hover-color: #8C1946;       /* Burgundy */
+  --gradient-start: #8C1946;    /* Burgundy */
+  --gradient-end: #FD3DB5;      /* Bright Pink */
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --sidebar-height: 75px;
+  --music-player-height: 100px;
+}
+
+/* ===== BASE STYLES ===== */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Reset for lists */
+ul, li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: var(--background-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
-.container {
-  width: 100%;
+.main-wrapper {
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  width: 100vw; /* Full viewport width */
+  max-width: 100%; /* Ensure it doesn't overflow */
 }
 
+/* ===== NAVBAR STYLES ===== */
 .sidebar {
-  width: 20vw;
-  padding: 20px;
-  float: left;
-  height: 70%;
-}
-.playlist-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  height: var(--sidebar-height);
+  padding: 15px 0;
+  background: rgba(140, 25, 70, 0.15);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px var(--shadow-color);
+  z-index: 1000;
+  margin-top: 0; /* Remove any top margin since header is gone */
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: space-between;  /* To evenly space the items */
-  height: 100%;  /* Ensure it takes the full height of the parent container */
 }
 
-/* Common styles for all list items */
-.playlist-list li {
-  padding: 15px;
-  margin: 10px 0;
-  text-align: center;
-  cursor: pointer;
-  width: 50%;
-  height: auto;   /* Make it take up 80% of the container's width */
-  aspect-ratio: 1;  /* Remove aspect ratio constraint */
-  /* flex-grow: 1;  Allow each item to grow and fill the available space */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
+.playlist-list-container {
   position: relative;
-  background-color: #ffb6c1; /* Light pink */
-  box-shadow: 5px 5px 3px #ff6347;
-}
-.playlist-list li:hover{
-  transform: scale(1.1);
-  transition: all 0.5s ease;
-  background-color: #ffb6c1; /* Light pink */
-  box-shadow: 5px 5px 3px #ff6347;
+  width: 100%; /* Use full width */
+  max-width: 100%; /* Use full width */
+  margin: 0 auto; /* Center the container */
+  padding: 5px 5px;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
-.playlist-list li.active {
-  transform: scale(1.1); /* Makes the active playlist larger */
-  background-color: #beef00; /* Change the background to highlight the active playlist */
-  border-radius: 10px;
-  box-shadow: 5px 5px 3px rgb(0, 0, 0, 0.15);
-  transition: all 0.3s ease; /* Smooth transition for scaling and background */
+.playlist-list-container::-webkit-scrollbar{
+  display: none;
+}
+
+.playlist-list {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+  flex-wrap: wrap; /* Allow items to wrap */
+  width: 100%;
+}
+
+.playlist-item {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, rgba(140, 25, 70, 0.2) 0%, rgba(253, 61, 181, 0.2) 100%);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+  white-space: nowrap;
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px; /* Set fixed minimum width for all items */
+  width: 120px; /* Set fixed width for all items */
+  height: 45px; /* Set fixed height for all items */
+}
+
+.playlist-item:hover,
+.playlist-item.active {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(140, 25, 69, 0.526) 0%, rgba(253, 61, 179, 0.471) 100%);
+  box-shadow: 0 6px 15px rgba(140, 25, 70, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .playlist-title {
-  font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
+  text-align: center; /* Center text */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Add ellipsis for long text */
+  width: 100%; /* Use full width */
 }
 
-/* Playlist */
+/* ===== PLAYLIST STYLES ===== */
+.main-container {
+  position: relative;
+  flex: 1;
+  /* padding: 20px; */
+  padding-bottom: 15px;
+  margin-top: var(--sidebar-height);
+  margin-bottom: var(--music-player-height); /* Use variable for consistency */
+  width: 90%; /* Reduced from 100vw */
+  max-width: 1200px; /* Added max width */
+  box-sizing: border-box;
+  height: auto;
+  min-height: calc(100vh - var(--sidebar-height) - var(--music-player-height)); /* Use CSS variables */
+  margin-left: auto; /* Center the container */
+  margin-right: auto; /* Center the container */
+  overflow-y: visible; /* Remove scrollbar */
+}
+
+/* Override Bootstrap container */
+.container {
+  max-width: 90% !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
 .playlist {
-  /* list-style-type: none; */
-  padding: 20px;
-  margin: 3vh auto;
-  background-color: #b61977;
-  height: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
   overflow-y: auto;
-  width: 70%;
-  max-height: 70vh;
+  overflow-x: hidden;
+  max-height: 100%;
+  scrollbar-width: none;
+}
+
+.playlist::-webkit-scrollbar{
+  display: none;
 }
 
 .playlist li {
+  padding: 12px 15px;
+  margin: 7px;
+  background: rgba(140, 25, 70, 0.1);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px;
-  border-bottom: 2px solid #ffffff;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, filter 0.3s ease;
-  filter: blur(0.2px);
-  position: relative; /* Positioning context for centering artist */
+}
+
+.playlist li:hover {
+  transform: translateX(5px);
+  background: rgba(140, 25, 70, 0.2);
+  border: 1px solid rgba(253, 61, 181, 0.3);
+  box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+/* .playlist li.playing {
+  background: linear-gradient(to right, var(--gradient-start) 0%, var(--gradient-end) 100%);
+  box-shadow: 0 4px 12px var(--shadow-color);
+} */
+
+@keyframes futuristicPulse {
+  0% {
+    box-shadow:
+      0 0 4px var(--gradient-start),
+      0 0 8px var(--gradient-end),
+      inset 0 0 2px var(--gradient-start);
+  }
+  50% {
+    box-shadow:
+      0 0 6px var(--gradient-start),
+      0 0 12px var(--gradient-end),
+      inset 0 0 4px var(--gradient-end);
+  }
+  100% {
+    box-shadow:
+      0 0 4px var(--gradient-start),
+      0 0 8px var(--gradient-end),
+      inset 0 0 2px var(--gradient-start);
+  }
 }
 
 .playlist li.playing {
-  background-color: #930f65;
-  /* background-color: #f92c85; */
-  border-radius: 8px;
-  filter: none;
-  font-weight: bold;
+  background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+  animation: futuristicPulse 1.8s ease-in-out infinite;
+  border: 1px solid var(--gradient-end);
+  box-shadow:
+    0 0 6px var(--gradient-start),
+    0 0 10px var(--gradient-end),
+    inset 0 0 2px rgba(255,255,255,0.05);
+  transition: background 0.4s ease, box-shadow 0.3s ease;
 }
 
-.playlist li:hover:not(.playing) {
-  background-color: #a2116f;
-  filter: none;
-}
-/* Track Duration */
-.track-duration {
-  font-size: 14px;
-  color: #DDD0C8;
-  white-space: nowrap; /* Prevent duration from wrapping */
-  margin-left: auto;
-  text-align: right;
-}
 
 .track-title {
-  flex: 1;
-  margin-right: 10px; /* Space between title and artist */
-  text-align: left; /* Align title to the left */
-  color: #FFEB3B;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
 }
 
-/* Artist */
 .artist {
-  color: rgb(242, 195, 133);
-  font-size: 16px;
-  text-align: justify; /* Center align artist */
-  margin: 0 10px; /* Space between artist and duration */
-  white-space: nowrap; /* Prevent artist name from wrapping */
-  flex: 1; /*  Allow the artist name to take up available space */
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.playlist li span {
-  display: flex;
-  align-items: center;
+.track-duration {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
 }
 
-/* Music Player */
+/* ===== MUSIC PLAYER STYLES ===== */
 .music-player {
-  background-color: #930f65;
-  /* background-color:#970747; */
-  padding: 20px;
-  box-shadow: 0px -10px 20px rgba(0, 0, 0, 0.3);
   position: fixed;
   bottom: 0;
-  width: 100vw;
-  z-index: 1;
-  box-sizing: border-box;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #8C1946 0%, #FD3DB5 100%);
+  padding: 15px;
+  box-shadow: 0 -5px 15px var(--shadow-color);
+  z-index: 100;
+  /* height: var(--music-player-height); */
+  min-height: 100px;
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .player-content {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Align items from start and end */
-  flex-wrap: wrap;
-  max-width: 1200px; /* Max width for the content */
+  justify-content: space-between;
   margin: 0 auto;
+  /* position: relative; */
+  flex-wrap: nowrap;
+  gap: 5px;
 }
 
-/* Track Image */
 .track-image-container {
-  flex: 0 0 12%; /* Take 12% of the width */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* margin-right: 20px; */
-}
-
-@keyframes flexible {
-	
-	75% {
-		transform: scale(1.1);
-	}
-	100% {
-		transform: scaleX(1);
-	}
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  position: relative;
 }
 
 .track-image-container img {
-  width: 100px;
-  height: 100px;
-  border-radius: 10px;
-  border: 2px solid #DDD0C8;
-  /* */
-}
-
-/* Control Buttons and Timer */
-.controls-and-timer {
-  flex: 1;
-  display: flex;
-  /* flex: 0 0 40%; */
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 0 20px;
-}
-
-.buttons-container {
-  display: flex;
-  justify-content: space-around;
   width: 100%;
-  margin-bottom: 10px;
-}
-
-.control-btn {
-  font-size: 20px;
-  background-color: transparent;
-  color: #ecf0f1;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
-}
-
-.control-btn.active {
-  border-radius: 25%;
-  color: #3498db;
-  transform: scale(1.1);
-}
-
-.control-btn:hover {
-  transform: scale(1.2);
-}
-
-/* Play Pause Button */
-#play-pause-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  position: relative; /* Ensure the icons are positioned correctly inside the button */
-  font-size: 24px; /* Ensure both icons have the same font size */
-  display: inline-block;
-  width: 40px; /* Set a fixed width */
-  height: 40px; /* Set a fixed height */
-}
-
-#play-pause-btn i {
-  position: absolute; /* Stack the icons on top of each other */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.3s ease; /* Smooth transition */
-}
-
-.fa-play {
-  opacity: 0; /* Hide play icon by default */
-}
-
-.fa-pause {
-  opacity: 1; /* Show pause icon by default */
-  color: #3498db;
-}
-
-#play-pause-btn.active .fa-play {
-  opacity: 1; /* Show play icon when active */
-  color: #ffffff;
-}
-
-#play-pause-btn.active .fa-pause {
-  opacity: 0; /* Hide pause icon when active */
-}
-
-/* Seek Bar */
-.seek-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* Ensure seek-bar and volume control are in one line */
-  width: 100%;
-  margin: 10px 0;
-}
-
-.seek-bar {
-  flex: 1; /* Allow the seek-bar to grow and take up remaining space */
-  margin: 0 10px; /* Space around the seek-bar */
-}
-
-#current-time {
-  flex: 0 0 auto; /* Prevent from growing or shrinking */
-  color: aquamarine;
-}
-
-#duration-time {
-  flex: 0 0 auto; /* Prevent from growing or shrinking */
-  color: aquamarine;
-}
-
-.seek-bar.horizontal {
-  width: 100%;
-  height: 90%;
-  background-color: #ecf0f1;
-  border-radius: 5px;
-  margin: 0.4rem 1rem;
-}
-
-.seek-bar.horizontal::-webkit-slider-thumb {
-  appearance: none;
-  height: 10px;
-  width: 10px;
-  background-color: #3498db;
-  border-radius: 50%;
-  cursor: grab;
-}
-
-.time-info {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-/* Volume Control */
-.volume-control {
-  flex: 0 0 8%; /* Take 8% of the width */
-}
-
-.volume-bar {
-  writing-mode: bt-lr;
-  transform: rotate(-90deg);
-  width: 100%;
-  height: 10px;
-  background-color: #ffffff;
-}
-
-.volume-bar::-webkit-slider-thumb {
-  appearance: none;
   height: 100%;
-  width: 100%;
-  background-color: #3498db;
   border-radius: 50%;
-  cursor: grab;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 8px var(--shadow-color);
+  object-fit: cover;
+  transition: all 0.3s ease;
 }
 
-/* Track Info */
+.track-image-container::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: linear-gradient(135deg, #FD3DB5 0%, #8C1946 100%);
+  border-radius: 50%;
+  z-index: -1;
+  opacity: 0.6;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+}
+
 .track-info {
-  flex: 0 0 20%; /* Take 10% of the width */
-  text-align: center;
-  padding: 2px 15px;
+  flex: 0 1 20%;
+  /* min-width: 100px; */
+  /* max-width: 200px; */
+  overflow: hidden;
 }
 
 .track-info h2 {
-  font-size: 18px;
-  font-weight: bold;
-  color: #ecf0f1;
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .track-info h3 {
   font-size: 14px;
-  color: #bdc3c7;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.controls-and-timer {
+  flex: 0 1 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px; /* Add space for the volume control */
+  min-width: 200px;
+}
+
+.buttons-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 6px;
+}
+
+.control-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-color);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  backdrop-filter: blur(5px);
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(253, 61, 181, 0.4);
+}
+
+.control-btn.active {
+  background: #FD3DB5;
+  color: var(--background-color);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+#play-pause-btn {
+  width: 50px;
+  height: 50px;
+  font-size: 20px;
+  background: #8C1946;
+  border: none;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+#play-pause-btn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(253, 61, 181, 0.7) 0%, rgba(140, 25, 70, 0) 70%);
+  z-index: -1;
+  animation: rotate 10s linear infinite;
+  opacity: 0.6;
+}
+
+#play-pause-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(253, 61, 181, 0.5);
+}
+
+.seek-container {
+  width: 100%;
+  display: flex;
+}
+
+.time-info {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.seek-bar {
+  -webkit-appearance: none;
+  width: 75%;
+  height: 6px;
+  background: linear-gradient(to right, #ff66cc, #ff33cc);
+  border-radius: 3px;
+  outline: none;
+  position: relative;
+  z-index: 0;
+}
+
+/* Webkit (Chrome, Safari) */
+.seek-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  background: white;
+  border: 2px solid #ff33cc;
+  border-radius: 50%;
+  position: relative;
+  z-index: 2;
+}
+
+#seek-bar {
+  transition: background 0.3s ease;
+}
+
+.volume-control {
+  position: absolute;
+  right: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 30px;
+  height: 100%;
+  justify-content: center;
+}
+
+.volume-icon {
+  color: var(--text-color);
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.volume-bar {
+  -webkit-appearance: none;
+  width: 6px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+  transform: rotate(0deg);
+}
+
+.volume-bar::-webkit-slider-thumb {
+  visibility: hidden;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.hidden {
+  display: none;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Apply rotation animation to the album cover when song is playing */
+.playing .track-image-container img {
+  animation: rotate 20s linear infinite;
+}
+
+/* Remove scrollbar styles */
+.seek-bar::-webkit-slider-thumb, .volume-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #FD3DB5;
+  border: 2px solid var(--text-color);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  visibility: hidden;
 }
