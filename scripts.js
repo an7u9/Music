@@ -12,6 +12,7 @@ const nextBtn = document.getElementById('next-btn');
 const prevBtn = document.getElementById('prev-btn');
 const loopBtn = document.getElementById('loop-btn');
 const shuffleBtn = document.getElementById('shuffle-btn');
+const volumeIcon = document.querySelector('.volume-icon');
 
 // Audio instance and state
 const audio = new Audio();
@@ -47,6 +48,12 @@ const playlists = {
   ],
   favorites: [
     { src: 'songs/favSong1.mp3', title: 'Favorite Song 1', artist: 'Fav Artist', image: 'pics/favSong1.jpg' }
+  ],
+  chill: [
+    { src: 'songs/Zaroorat.mp3', title: 'Chill Song 1', artist: 'Chill Artist', image: 'pics/Zaroorat.jpg' }
+  ],
+  focus: [
+    { src: 'songs/Zaroorat.mp3', title: 'Focus Song 1', artist: 'Focus Artist', image: 'pics/Zaroorat.jpg' }
   ]
 };
 
@@ -76,11 +83,25 @@ const updatePlayingClass = () => {
 
 const updatePlayPauseButton = (playing) => {
   if (playing) {
-    playPauseBtn.classList.add('active', 'icon-pause');
-    playPauseBtn.classList.remove('icon-play');
+    playPauseBtn.querySelector('.fa-play').style.display = 'none';
+    playPauseBtn.querySelector('.fa-pause').style.display = 'inline-block';
+    playPauseBtn.classList.add('active');
   } else {
-    playPauseBtn.classList.remove('active', 'icon-pause');
-    playPauseBtn.classList.add('icon-play');
+    playPauseBtn.querySelector('.fa-play').style.display = 'inline-block';
+    playPauseBtn.querySelector('.fa-pause').style.display = 'none';
+    playPauseBtn.classList.remove('active');
+  }
+};
+
+const updateVolumeIcon = (volume) => {
+  if (!volumeIcon) return;
+  
+  if (volume === 0) {
+    volumeIcon.className = 'fas fa-volume-mute';
+  } else if (volume < 0.5) {
+    volumeIcon.className = 'fas fa-volume-down';
+  } else {
+    volumeIcon.className = 'fas fa-volume-up';
   }
 };
 
@@ -90,6 +111,15 @@ const loadPlaylist = (playlistName) => {
   currentPlaylistName = playlistName;
   tracks = playlists[playlistName] || [];
   playlist.innerHTML = '';
+  
+  // Update active playlist in the navbar
+  document.querySelectorAll('.playlist-item').forEach(item => {
+    if (item.getAttribute('data-playlist') === playlistName) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
 
   tracks.forEach((track, index) => {
     const li = document.createElement('li');
@@ -98,6 +128,7 @@ const loadPlaylist = (playlistName) => {
     li.setAttribute('data-src', fullSrc);
     li.setAttribute('data-playlist', playlistName);
     li.setAttribute('data-index', index);
+    li.className = 'track-details';
     li.innerHTML = `
       <span class="track-title">${track.title}</span>
       <span class="artist">${track.artist}</span>
@@ -151,8 +182,10 @@ const playTrackFromPlaylist = (trackIndex, playlistName) => {
   } else {
     if (audio.paused) {
       audio.play();
+      updatePlayPauseButton(true);
     } else {
       audio.pause();
+      updatePlayPauseButton(false);
     }
   }
 };
@@ -178,41 +211,69 @@ const playPrevTrack = () => {
 // Event Listeners
 window.addEventListener('load', () => {
   const defaultPlaylist = 'romantic';
-  const defaultPlaylistItem = document.querySelector('.playlist-list li[data-playlist]');
+  const defaultPlaylistItem = document.querySelector('.playlist-list li[data-playlist="romantic"]');
   
   if (defaultPlaylistItem) {
     loadPlaylist(defaultPlaylist);
     defaultPlaylistItem.classList.add('active');
-    playTrackFromPlaylist(0, defaultPlaylist);
+  }
+  
+  // Initial state setup
+  playPauseBtn.querySelector('.fa-pause').style.display = 'none';
+  
+  // Set up navigation arrows for tablet view
+  setupNavigationArrows();
+  
+  // Initialize volume icon
+  updateVolumeIcon(volumeBar.value);
+});
+
+// Navigation arrows functionality for tablet view
+const setupNavigationArrows = () => {
+  const prevArrow = document.querySelector('.nav-arrow.prev');
+  const nextArrow = document.querySelector('.nav-arrow.next');
+  const playlistList = document.querySelector('.playlist-list');
+  
+  if (!prevArrow || !nextArrow || !playlistList) return;
+  
+  let scrollAmount = 0;
+  const scrollStep = 200;
+  
+  prevArrow.addEventListener('click', () => {
+    scrollAmount = Math.max(0, scrollAmount - scrollStep);
+    playlistList.style.transform = `translateX(-${scrollAmount}px)`;
+    checkArrowVisibility();
+  });
+  
+  nextArrow.addEventListener('click', () => {
+    const maxScroll = playlistList.scrollWidth - playlistList.clientWidth;
+    scrollAmount = Math.min(maxScroll, scrollAmount + scrollStep);
+    playlistList.style.transform = `translateX(-${scrollAmount}px)`;
+    checkArrowVisibility();
+  });
+  
+  const checkArrowVisibility = () => {
+    prevArrow.style.display = scrollAmount <= 0 ? 'none' : 'flex';
+    nextArrow.style.display = scrollAmount >= (playlistList.scrollWidth - playlistList.clientWidth) ? 'none' : 'flex';
+  };
+  
+  // Initial check
+  checkArrowVisibility();
+};
+
+// Audio Event Listeners
+audio.addEventListener('timeupdate', () => {
+  currentTimeElem.textContent = formatDuration(audio.currentTime);
+
+  if (audio.duration) {
+    const percentage = (audio.currentTime / audio.duration) * 100;
+    seekBar.value = percentage;
+    updateSeekBarBackground(percentage);
   }
 });
 
-document.querySelectorAll('.playlist-list li').forEach(playlistItem => {
-  playlistItem.addEventListener('click', () => {
-    document.querySelectorAll('.playlist-list li').forEach(item => {
-      item.classList.remove('active');
-    });
-    playlistItem.classList.add('active');
-    loadPlaylist(playlistItem.getAttribute('data-playlist'));
-  });
-});
-
-// Audio Event Listeners
-audio.addEventListener('play', () => {
-  updatePlayingClass();
-  updatePlayPauseButton(true);
-});
-
-audio.addEventListener('pause', () => {
-  updatePlayingClass();
-  updatePlayPauseButton(false);
-});
-
-audio.addEventListener('timeupdate', () => {
-  const { currentTime, duration } = audio;
-  seekBar.value = (currentTime / duration) * 100;
-  currentTimeElem.textContent = formatDuration(currentTime);
-  durationTimeElem.textContent = formatDuration(duration);
+audio.addEventListener('loadedmetadata', () => {
+  durationTimeElem.textContent = formatDuration(audio.duration);
 });
 
 audio.addEventListener('ended', () => {
@@ -224,34 +285,67 @@ audio.addEventListener('ended', () => {
   }
 });
 
-// Control Event Listeners
+// Control Button Listeners
 playPauseBtn.addEventListener('click', () => {
-  if (audio.paused) {
-    audio.play();
-  } else {
-    audio.pause();
+  if (audio.src) {
+    if (audio.paused) {
+      audio.play();
+      updatePlayPauseButton(true);
+    } else {
+      audio.pause();
+      updatePlayPauseButton(false);
+    }
+  } else if (tracks.length > 0) {
+    playTrackFromPlaylist(0, currentPlaylistName);
   }
 });
 
 nextBtn.addEventListener('click', playNextTrack);
 prevBtn.addEventListener('click', playPrevTrack);
 
+// Loop Button
 loopBtn.addEventListener('click', () => {
   isLooping = !isLooping;
-  audio.loop = isLooping;
   loopBtn.classList.toggle('active', isLooping);
 });
 
+// Shuffle Button
 shuffleBtn.addEventListener('click', () => {
   isShuffling = !isShuffling;
   shuffleBtn.classList.toggle('active', isShuffling);
 });
 
+// Seek Bar
+const updateSeekBarBackground = (value) => {
+  seekBar.style.background = `
+    linear-gradient(to right, white ${value}%, transparent ${value}%),
+    linear-gradient(to right, #ff66cc, #ff33cc)
+  `;
+};
+
 seekBar.addEventListener('input', () => {
-  const newTime = (seekBar.value / 100) * audio.duration;
-  audio.currentTime = newTime;
+  const seekTime = (seekBar.value / 100) * audio.duration;
+  audio.currentTime = seekTime;
+  updateSeekBarBackground(seekBar.value);
 });
 
+// Volume Bar
 volumeBar.addEventListener('input', () => {
-  audio.volume = volumeBar.value / 100;
+  audio.volume = volumeBar.value;
+  updateVolumeIcon(volumeBar.value);
+});
+
+// Playlist Selection
+document.querySelectorAll('.playlist-list li').forEach(item => {
+  item.addEventListener('click', () => {
+    const playlistName = item.getAttribute('data-playlist');
+    if (playlistName) {
+      loadPlaylist(playlistName);
+      
+      // If no track is playing, start playing the first track
+      if (audio.paused && tracks.length > 0) {
+        playTrackFromPlaylist(0, playlistName);
+      }
+    }
+  });
 });
