@@ -1,107 +1,171 @@
-/* Responsive Design for devices with width between 500px and 800px */
-@media (max-width: 800px) and (min-width: 500px) {
-  /* .music-player {
-    height: 20vh; 
-  } */
+/* ===== RESPONSIVE DESIGN STYLES ===== */
 
-  .player-content {
-    display: grid;
-    grid-template-columns: 30% 70%;
-    /* Adjust percentage as needed */
-    grid-template-rows: auto auto;
-    column-gap: 20px;
-    /* Gap between columns */
-    align-items: start;
+/* Animation for the wave effect in playing tracks */
+@keyframes wave-slide {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
   }
 
-  .track-image-container {
-    grid-column: 1;
-    /* Place track image in the first column */
-    grid-row: 1;
-    /* Make track image span both rows */
-    width: 100%;
-    /* Full width of the column */
-    /* margin-bottom: 10px; */
+  50% {
+    opacity: 0.5;
   }
 
-  .track-info {
-    grid-column: 1;
-    /* Place track info below the track image */
-    grid-row: 2;
-    /* margin: 10px 0; */
-    display: flex;
-    flex-direction: column;
-    /* Align content vertically */
-    align-items: center;
-  }
-
-  .controls-and-timer {
-    grid-column: 2;
-    /* Place controls to the right of track image and info */
-    grid-row: 1;
-    /* Make it span both rows */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-  }
-
-  .seek-container {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .seek-bar.horizontal {
-    width: 70%;
-    /* Adjust width as needed */
-  }
-
-  .volume-control {
-    grid-column: 2;
-    /* Place track info below the track image */
-    grid-row: 2;
-    flex: 0 0 30%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: rotate(90deg);
-    /* Adjusted from 'rotate' to 'transform' */
-    margin-left: 10px;
-  }
-
-  .volume-bar {
-    width: 30vw;
-    /* Adjust width as needed */
-    height: 8px;
-    /* Adjust height as needed */
-  }
-
-  .buttons-container {
-    margin: 10px 0;
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
   }
 }
 
-@media (max-width: 500px) {
-
-  .player-content {
-    flex-direction: column;
-    align-items: center;
+/* ===== TABLETS (800px to 501px) ===== */
+@media (max-width: 800px) and (min-width: 501px) {
+  /* Override variables for tablet */
+  :root {
+    --music-player-height: 100px;
   }
 
-  .music-player {
-    padding: 3px 10px 15px 10px;
-    /* margin: 3px 10px 15px 10px; */
-    height: 30vh;
+  /* Layout adjustments */
+  body {
+    overflow-y: auto;
+    height: 100%;
+  }
+
+  .sidebar {
+    padding: 10px;
+  }
+
+  .playlist {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* Music Player grid layout for tablets */
+  .player-content {
+    display: grid;
+    grid-template-columns: 25% 75%;
+    grid-template-rows: auto auto;
+    column-gap: 15px;
+    padding-right: 40px;
+    /* Space for volume control */
+  }
+
+  /* Track image adjustments */
+  .track-image-container {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .track-image-container img {
+    width: 80px;
+    height: 80px;
+  }
+
+  /* Track Info positioning */
+  .track-info {
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+    flex: 0 0 auto;
     width: 100%;
   }
 
-  .track-image-container {
-    margin: 3px;
+  .track-info h2 {
+    margin-bottom: 3px;
   }
+
+  /* Controls positioning */
+  .controls-and-timer {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin: 5px 0;
+    width: 100%;
+    max-width: calc(100% - 40px);
+  }
+
+  .time-info {
+    font-size: 11px;
+  }
+
+  .volume-control {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 80%;
+  }
+
+  /* Responsive button sizing */
+  .buttons-container {
+    gap: calc(4% + 6px);
+    width: 100%;
+    margin: 8px 0;
+  }
+
+  .control-btn {
+    width: calc(8% + 22px);
+    height: calc(8% + 22px);
+    font-size: calc(8px + 0.5vw);
+  }
+
+  #play-pause-btn {
+    width: calc(10% + 28px);
+    height: calc(10% + 28px);
+    font-size: calc(10px + 0.5vw);
+  }
+
+  .music-player {
+    min-height: 150px;
+  }
+}
+
+/* ===== MOBILE (500px and below) ===== */
+@media (max-width: 500px) {
+  /* Override variables for mobile */
+  :root {
+    --music-player-height: 110px;
+    --sidebar-height: 60px;
+  }
+
+  /* Main container adjustments */
+  .main-container {
+    width: 95%;
+    max-width: 600px;
+    margin-top: var(--sidebar-height); /* Match the variable from main CSS */
+    margin-bottom: var(--music-player-height); /* Match the variable from main CSS */
+    min-height: calc(100vh - var(--sidebar-height) - var(--music-player-height)); /* Use CSS variables */
+  }
+
+  .player-content{
+    flex-direction: column;
+  }
+
+  .track-image-container {
+    position: absolute;
+    top: -15%;
+    /* half the image height to pop it out */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    /* border: 4px solid #fff; */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+  }
+
+  .track-image-container img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    animation: rotating 10s linear infinite;
+  }
+
 
   @keyframes rotating {
     0% {
@@ -113,94 +177,133 @@
     }
   }
 
-  .track-image-container img {
-    border-radius: 50%;
-    box-shadow: 1px 1px 2px rgb(130, 125, 125);
-    /* animation: rotating;
-    animation-timing-function: ease-in-out;
-    animation-duration: 10s;
-    animation-iteration-count: infinite; */
-    animation: rotating 10s linear infinite;
-    margin-top: -40%;
+  /* Sidebar adjustments */
+  .sidebar {
+    padding: 10px 0;
+    height: var(--sidebar-height);
+    overflow: hidden;
   }
 
-  .playlist{
-    width: 80%;
-    max-height: 64vh;
-    margin: auto;
+  .playlist-list-container {
+    width: 98%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    /* padding: 0 5px; */
   }
 
-  .playlist-title{
-    font-size: 8px;
-    font-weight: bold;
-  }
-  .playlist li span {
-    font-size: 10px;
-  }
-
-  .controls-and-timer {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    margin: 0px;
+  .playlist-list {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 8px;
+    width: max-content;
+    padding: 0 7px;
   }
 
-  .seek-container {
-    align-items: center;
-    width: 100%;
-    margin: 0px;
+  .playlist-item {
+    padding: 8px 15px;
+    font-size: 12px;
+    width: 100px;
+    min-width: 100px;
+    height: inherit;
   }
 
-  .seek-bar.horizontal {
-    width: 70%;
+  .playlist-title {
+    font-size: 12px;
+    max-width: 90px;
   }
 
-  .volume-bar {
+  /* Volume control positioning */
+  .volume-control {
     display: none;
-    width: 35vw;
-    height: 8px;
-    rotate: 90deg;
-    margin-bottom: 2px;
   }
 
-  .sidebar{
-    height: 50%;
-    width: 8%;
-  }
-
-  .playlist-list li {
-    width: 90%; /* Take up more space on small screens */
-    padding: 10px;
-    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.15); /* Smaller shadow */
-  }
-
+  /* Track info positioning */
   .track-info {
-    /* display: none; */
     display: flex;
     flex-direction: row;
-    width: 85%;
-    justify-content: space-around;
-    margin-bottom: 5px;
+    width: 95%;
+    justify-content: space-between;
+    /* top right bottom left*/
+    padding: 2px 2px 7px 0px;
   }
 
   .track-info h2 {
-    font-size: 15px;
+    font-size: 11px;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 40%;
   }
 
-  .playlist li span.artist{
-    font-size: 9px;
+  .track-info h3 {
+    font-size: 10px;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 48%;
+    text-align: right;
   }
 
-  .playlist li span.track-duration{
-    font-size: 8px;
+  .track-title{
+    font-size: 12px;
+  white-space: nowrap;       /* ❌ No wrapping */
+  overflow: hidden;          /* 🧼 Hide overflow */
+  text-overflow: ellipsis;   /* … shows when cut off */
+  max-width: 45%;
+  }
+  .artist{
+    font-size: 10px;
+  }
+  .track-duration{
+    font-size: 10px;
+  }
+  /* Control adjustments */
+  .controls-and-timer {
+    width: 90%;
+    margin: 2px;
+  }
+
+  .seek-container {
+    width: 100%;
+    padding: 0;
+    display: block;
   }
 
   .time-info {
-    margin: 0px 30px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
   }
 
+
+  .seek-bar::-webkit-slider-thumb {
+    visibility: visible;
+    /* Make thumb visible */
+    opacity: 1;
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Button sizing */
   .buttons-container {
-    margin: 3px 0px 3px 0px;
+    gap: 20px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .control-btn {
+    width: 25px;
+    height: 25px;
+    font-size: 12px;
+  }
+
+  #play-pause-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
   }
 }
