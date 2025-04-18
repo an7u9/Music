@@ -25,6 +25,7 @@ let isShuffling = false;
 // Playlists data
 const playlists = {
   romantic: [
+    {src: 'songs/Marne Se Pehle.mp3', title: 'Marne Se Pehle', artist: 'Armaan Malik', image: 'pics/marne.jpg' },
     { src: 'songs/Zaroorat.mp3', title: 'Zaroorat Se Jyada', artist: 'Arijit Singh', image: 'pics/Zaroorat.jpg' },
     { src: 'songs/veham.mp3', title: 'Veham', artist: 'Armaan Malik', image: 'pics/veham.jpg' },
     { src: 'songs/Barsaat.mp3', title: 'Barsaat', artist: 'Armaan Malik', image: 'pics/Barsaat.jpg' },
