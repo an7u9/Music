@@ -2,5 +2,4 @@
  a static web page
 
  
-# Live
-https://music-docile.vercel.app/
+# Live - https://music-docile.vercel.app/
