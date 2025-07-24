@@ -25,10 +25,10 @@ let isShuffling = false;
 // Playlists data
 const playlists = {
   romantic: [
-    {src: 'songs/Marne Se Pehle.mp3', title: 'Marne Se Pehle', artist: 'Armaan Malik', image: 'pics/marne.jpg' },
-    { src: 'songs/Zaroorat.mp3', title: 'Zaroorat Se Jyada', artist: 'Arijit Singh', image: 'pics/Zaroorat.jpg' },
-    { src: 'songs/veham.mp3', title: 'Veham', artist: 'Armaan Malik', image: 'pics/veham.jpg' },
-    { src: 'songs/Barsaat.mp3', title: 'Barsaat', artist: 'Armaan Malik', image: 'pics/Barsaat.jpg' },
+    {src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352558/Marne_Se_Pehle_n3ecpc.mp3', title: 'Marne Se Pehle', artist: 'Armaan Malik', image: 'pics/marne.jpg' },
+    { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352568/Zaroorat_n1xzgl.mp3', title: 'Zaroorat Se Jyada', artist: 'Arijit Singh', image: 'pics/Zaroorat.jpg' },
+    { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352567/veham_vmamr7.mp3', title: 'Veham', artist: 'Armaan Malik', image: 'pics/veham.jpg' },
+    { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352560/Barsaat_khuu0o.mp3', title: 'Barsaat', artist: 'Armaan Malik', image: 'pics/Barsaat.jpg' },
     { src: 'songs/intezaar.mp3', title: 'Tera Main Intezaar', artist: 'Armaan Malik', image: 'pics/intezaar.jpg' },
     { src: 'songs/Baarishon.mp3', title: 'Baarishon Mein', artist: 'Darshan Raval', image: 'pics/Baarishon.jpg' },
     { src: 'songs/Judaiyaan.mp3', title: 'Judayiaan', artist: 'Darshan Raval', image: 'pics/Judaiyaan.jpg' },
