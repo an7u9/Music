@@ -126,6 +126,7 @@
 
 /* ===== MOBILE (500px and below) ===== */
 @media (max-width: 500px) {
+  
   /* Override variables for mobile */
   :root {
     --music-player-height: 110px;
@@ -136,12 +137,16 @@
   .main-container {
     width: 95%;
     max-width: 600px;
-    margin-top: var(--sidebar-height); /* Match the variable from main CSS */
-    margin-bottom: var(--music-player-height); /* Match the variable from main CSS */
-    min-height: calc(100vh - var(--sidebar-height) - var(--music-player-height)); /* Use CSS variables */
+    margin-top: var(--sidebar-height);
+    /* Match the variable from main CSS */
+    margin-bottom: var(--music-player-height);
+    /* Match the variable from main CSS */
+    min-height: calc(100vh - var(--sidebar-height) - var(--music-player-height));
+    /* Use CSS variables */
   }
 
-  .player-content{
+  .player-content {
+    
     flex-direction: column;
   }
 
@@ -159,24 +164,26 @@
     z-index: 10;
   }
 
-  .track-image-container img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    animation: rotating 10s linear infinite;
-  }
-
-
   @keyframes rotating {
     0% {
       transform: rotate(0deg);
     }
-
     100% {
       transform: rotate(360deg);
     }
   }
 
+  .track-image-container img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    /* animation: rotating 10s linear infinite; */
+  }
+  
+  .playing .track-image-container img {
+    animation: rotating 10s linear infinite;
+  }
+  
   /* Sidebar adjustments */
   .sidebar {
     padding: 10px 0;
@@ -225,6 +232,7 @@
     justify-content: space-between;
     /* top right bottom left*/
     padding: 2px 2px 7px 0px;
+    
   }
 
   .track-info h2 {
@@ -246,19 +254,28 @@
     text-align: right;
   }
 
-  .track-title{
+  .track-title {
     font-size: 12px;
-  white-space: nowrap;       /* ❌ No wrapping */
-  overflow: hidden;          /* 🧼 Hide overflow */
-  text-overflow: ellipsis;   /* … shows when cut off */
-  max-width: 45%;
+    white-space: nowrap;
+    /* ❌ No wrapping */
+    overflow: hidden;
+    /* 🧼 Hide overflow */
+    text-overflow: ellipsis;
   }
-  .artist{
+
+  .artist {
+    white-space: nowrap;
+    /* ❌ No wrapping */
+    overflow: hidden;
+    /* 🧼 Hide overflow */
+    text-overflow: ellipsis;
     font-size: 10px;
   }
-  .track-duration{
-    font-size: 10px;
+
+  .track-duration {
+    font-size: 0.7em;
   }
+
   /* Control adjustments */
   .controls-and-timer {
     width: 90%;
@@ -300,9 +317,45 @@
     height: 25px;
     font-size: 12px;
   }
+
   #play-pause-btn {
     width: 38px;
     height: 38px;
     font-size: 14px;
+  }
+
+  .track-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    padding-right: 70px; /* space for duration */
+  }
+
+  .track-details .track-main-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .track-details .track-title,
+  .track-details .artist {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+  }
+
+  .track-details .track-duration {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    text-align: right;
+    width: auto;
+    /* font-size remains unchanged */
   }
 }
