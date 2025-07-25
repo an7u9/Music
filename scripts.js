@@ -40,7 +40,7 @@ const playlists = {
     { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352553/Kya_Tujhe_Ab_Ye_Dil_Bataye_ufeixi.mp3', title: 'Kya Tujhe Ab Ye Dil Bataye', artist: 'Falak Shabbir', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353043/Kya_Tujhe_ptyb4w.jpg' }
   ],
   fresh: [
-    { src: 'https://drive.google.com/uc?export=download&id=1U41f6anytxE_sj-n-2Wbr039DTWc488v', title: 'Bade Din Huye', artist: 'Armaan Malik', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353041/Barsaat_oxszyv.jpg' }
+    { src: 'https://drive.google.com/uc?export=open&id=1U41f6anytxE_sj-n-2Wbr039DTWc488v', title: 'Bade Din Huye', artist: 'Armaan Malik', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353041/Barsaat_oxszyv.jpg' }
   ],
   party: [
     { src:'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352557/Pretty_hzjoog.mp3', title:'Pretty Girl', artist:'Maggie Lindemann', image:'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353046/pretty_qz9rky.jpg'},
