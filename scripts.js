@@ -39,13 +39,13 @@ const playlists = {
     { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352561/Naam_-_E_-_Wafa_ofiosg.mp3', title: 'Naam - E - Wafa', artist: 'Farhan Saeed', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353045/Naam_E_Wafa_tkecaf.jpg' },
     { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352553/Kya_Tujhe_Ab_Ye_Dil_Bataye_ufeixi.mp3', title: 'Kya Tujhe Ab Ye Dil Bataye', artist: 'Falak Shabbir', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353043/Kya_Tujhe_ptyb4w.jpg' }
   ],
+  fresh: [
+    { src: 'https://drive.google.com/file/d/1U41f6anytxE_sj-n-2Wbr039DTWc488v/view?usp=sharing', title: 'Bade Din Huye', artist: 'Armaan Malik', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353041/Barsaat_oxszyv.jpg' }
+  ],
   party: [
     { src:'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352557/Pretty_hzjoog.mp3', title:'Pretty Girl', artist:'Maggie Lindemann', image:'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353046/pretty_qz9rky.jpg'},
     { src:'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352550/Kya_Kardiya_vtwu00.mp3', title:'Kya Kardiya', artist:'Sushant KC', image:'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353044/kya_ojmkia.jpg'},
     { src:'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352566/proyojon_myisgu.mp3', title:'Nei Proyojon', artist:'Muza, Xefer', image:'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353047/proyojon_soj1fg.jpg'}
-  ],
-  workout: [
-    { src: 'songs/workoutSong1.mp3', title: 'Workout Song 1', artist: 'Artist1', image: 'pics/workoutSong1.jpg' }
   ],
   favorites: [
     { src: 'songs/favSong1.mp3', title: 'Favorite Song 1', artist: 'Fav Artist', image: 'pics/favSong1.jpg' }
