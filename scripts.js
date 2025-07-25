@@ -40,7 +40,7 @@ const playlists = {
     { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352553/Kya_Tujhe_Ab_Ye_Dil_Bataye_ufeixi.mp3', title: 'Kya Tujhe Ab Ye Dil Bataye', artist: 'Falak Shabbir', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353043/Kya_Tujhe_ptyb4w.jpg' }
   ],
   fresh: [
-    { src: 'https://drive.google.com/uc?export=open&id=1U41f6anytxE_sj-n-2Wbr039DTWc488v', title: 'Bade Din Huye', artist: 'Armaan Malik', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353041/Barsaat_oxszyv.jpg' }
+    { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753449538/Bade_Din_Huye_-_Song_Shantanu_M_Avneet_K_Kha_Ngan_Armaan_Malik_Amaal_Mallik_Rashmi_Virag_xpcerw.mp3', title: 'Bade Din Huye', artist: 'Armaan Malik', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753449730/d71fe6f9-b71a-4885-97e4-3c5499cb3702.png' }
   ],
   party: [
     { src:'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352557/Pretty_hzjoog.mp3', title:'Pretty Girl', artist:'Maggie Lindemann', image:'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353046/pretty_qz9rky.jpg'},
