@@ -187,16 +187,17 @@ body {
   box-shadow: 0 4px 8px var(--shadow-color);
 }
 
-/* .playlist li.playing {
-  background: linear-gradient(to right, var(--gradient-start) 0%, var(--gradient-end) 100%);
+.playlist li.playing {
+  background: linear-gradient(to right, var(--gradient-start) 0%, var(--gradient-end) 60%);
   box-shadow: 0 4px 12px var(--shadow-color);
-} */
+}
+
 
 @keyframes futuristicPulse {
   0% {
     box-shadow:
       0 0 4px var(--gradient-start),
-      0 0 8px var(--gradient-end),
+      0 0 6px var(--gradient-end),
       inset 0 0 2px var(--gradient-start);
   }
   50% {
