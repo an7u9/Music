@@ -188,36 +188,10 @@ body {
 }
 
 .playlist li.playing {
-  background: linear-gradient(to right, var(--gradient-start) 0%, var(--gradient-end) 60%);
-  box-shadow: 0 4px 12px var(--shadow-color);
-}
-
-
-@keyframes futuristicPulse {
-  0% {
-    box-shadow:
-      0 0 4px var(--gradient-start),
-      0 0 6px var(--gradient-end),
-      inset 0 0 2px var(--gradient-start);
-  }
-  50% {
-    box-shadow:
-      0 0 6px var(--gradient-start),
-      0 0 12px var(--gradient-end),
-      inset 0 0 4px var(--gradient-end);
-  }
-  100% {
-    box-shadow:
-      0 0 4px var(--gradient-start),
-      0 0 8px var(--gradient-end),
-      inset 0 0 2px var(--gradient-start);
-  }
-}
-
-.playlist li.playing {
-  background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+  /* background: linear-gradient(135deg, #311420 0%, #5d1838 50%, #8d2858 100%); */
+  background: linear-gradient(135deg, #2e0f21 0%, #500b2b 50%, #690238 90%);
   animation: futuristicPulse 1.8s ease-in-out infinite;
-  border: 1px solid var(--gradient-end);
+  border: 2px solid var(--gradient-end);
   box-shadow:
     0 0 6px var(--gradient-start),
     0 0 10px var(--gradient-end),
@@ -248,14 +222,14 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(135deg, #8C1946 0%, #FD3DB5 100%);
+  background: linear-gradient(135deg, #2e0f21 0%, #500b2b 50%, #690238 80%);
+  /* background: linear-gradient(135deg, #8C1946 0%, #FD3DB5 100%); */
   padding: 15px;
   box-shadow: 0 -5px 15px var(--shadow-color);
   z-index: 100;
   /* height: var(--music-player-height); */
   min-height: 100px;
   backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .player-content {
@@ -296,22 +270,6 @@ body {
   border-radius: 50%;
   z-index: -1;
   opacity: 0.6;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.4;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
 }
 
 .track-info {
@@ -402,8 +360,6 @@ body {
   height: 200%;
   background: radial-gradient(circle, rgba(253, 61, 181, 0.7) 0%, rgba(140, 25, 70, 0) 70%);
   z-index: -1;
-  animation: rotate 10s linear infinite;
-  opacity: 0.6;
 }
 
 #play-pause-btn:hover {
@@ -491,17 +447,6 @@ body {
   display: none;
 }
 
-/* ===== ANIMATIONS ===== */
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Apply rotation animation to the album cover when song is playing */
-.playing .track-image-container img {
-  animation: rotate 20s linear infinite;
-}
-
 /* Remove scrollbar styles */
 .seek-bar::-webkit-slider-thumb, .volume-bar::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -513,4 +458,52 @@ body {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   visibility: hidden;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes image-breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes ringPulse {
+  0%,100%{
+    opacity:.6;
+    transform: scale(1);
+  }
+
+  50%{
+    opacity:1;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes futuristicPulse {
+  0% {
+    box-shadow:
+      0 0 4px var(--gradient-start),
+      0 0 6px var(--gradient-end),
+      inset 0 0 2px var(--gradient-start);
+  }
+  50% {
+    box-shadow:
+      0 0 6px var(--gradient-start),
+      0 0 12px var(--gradient-end),
+      inset 0 0 4px var(--gradient-end);
+  }
+  100% {
+    box-shadow:
+      0 0 4px var(--gradient-start),
+      0 0 8px var(--gradient-end),
+      inset 0 0 2px var(--gradient-start);
+  }
 }

@@ -3,16 +3,16 @@
 /* Animation for the wave effect in playing tracks */
 @keyframes wave-slide {
   0% {
-    opacity: 0;
+    opacity: 0.2;
     transform: translateX(-100%);
   }
 
   50% {
-    opacity: 0.5;
+    opacity: 1;
   }
 
   100% {
-    opacity: 0;
+    opacity: 0.2;
     transform: translateX(100%);
   }
 }
@@ -59,9 +59,13 @@
   }
 
   .track-image-container img {
-    width: 80px;
-    height: 80px;
-  }
+  width: 40%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  animation: none;
+  transition: transform .35s ease;
+}
 
   /* Track Info positioning */
   .track-info {
@@ -160,7 +164,7 @@
     height: 50px;
     border-radius: 50%;
     /* border: 4px solid #fff; */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); */
     z-index: 10;
   }
 
@@ -174,16 +178,22 @@
   }
 
   .track-image-container img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    /* animation: rotating 10s linear infinite; */
-  }
-  
-  .playing .track-image-container img {
-    animation: rotating 10s linear infinite;
-  }
-  
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  animation: none;
+  transition: transform .35s ease;
+}
+  /* Animation only while playing */
+.track-image-container.playing img {
+  animation: rotate 12s linear infinite;
+}
+
+.track-image-container.playing::before {
+  animation: ringPulse 2.2s ease-in-out infinite;
+}
+
   /* Sidebar adjustments */
   .sidebar {
     padding: 10px 0;
