@@ -27,6 +27,7 @@ let isShuffling = false;
 // Playlists data
 const playlists = {
     indie: [
+        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1786284631/Parshawan_-_Harnoor_youtube_qj3mwx.mp3', title: 'Parshawan', artist: 'Harnoor', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1786284820/37d56d72-e0a3-461c-be73-dc9e7dc08377.png' }, 
         { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785187644/Finding_Her_-_kushagra_youtube_xqnlqf.mp3', title: 'Finding Her', artist: 'Kushagra', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785184696/b3a91fc3-80fa-43fc-b1ad-b598c4f41dbf.png' },
         { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785184328/Abdul_Hannan_Rovalio_-_Iraaday_Official_Music_Video_-_Abdul_Hannan_youtube_nogxsg.mp3', title: 'Iraaday', artist: 'Abdul Hannan', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785184696/b3a91fc3-80fa-43fc-b1ad-b598c4f41dbf.png' },
         { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785185444/Khat_-_Navjot_Ahuja_youtube_uraaca.mp3', title: 'Khat', artist: 'Navjot Ahuja', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785185411/f6352879-abcd-413a-b471-6a6b58392a41.png' },
