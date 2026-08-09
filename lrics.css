@@ -181,15 +181,24 @@
   align-items: center;
 }
 
+:root {
+  --player-height: 150px;
+}
+
 .lyrics-lines {
   width: 98vw;
   max-width: 98vw;
-  max-height: 80vh;
+  height: 100vh;
+  max-height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
   text-align: center;
-  padding: 20px 0;
+  padding:
+    20px
+    0
+    calc(var(--player-height, 110px) + 80px);
   scrollbar-width: none;
+  scroll-behavior: smooth;
   box-sizing: border-box;
 }
 
