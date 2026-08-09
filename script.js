@@ -25,48 +25,244 @@ let isLooping = false;
 let isShuffling = false;
 
 // Playlists data
+
 const playlists = {
+
     indie: [
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785187644/Finding_Her_-_kushagra_youtube_xqnlqf.mp3', title: 'Finding Her', artist: 'Kushagra', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785184696/b3a91fc3-80fa-43fc-b1ad-b598c4f41dbf.png' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785184328/Abdul_Hannan_Rovalio_-_Iraaday_Official_Music_Video_-_Abdul_Hannan_youtube_nogxsg.mp3', title: 'Iraaday', artist: 'Abdul Hannan', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785184696/b3a91fc3-80fa-43fc-b1ad-b598c4f41dbf.png' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785185444/Khat_-_Navjot_Ahuja_youtube_uraaca.mp3', title: 'Khat', artist: 'Navjot Ahuja', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785185411/f6352879-abcd-413a-b471-6a6b58392a41.png' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785185667/Inaam_-_Anuv_Jain_youtube_gtwtwo.mp3', title: 'Inaam', artist: 'Anuv Jain', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785185654/0217d86e-b2d4-4a7c-aa99-7d3f3d1a7722.png' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785186303/Khasara_-_Abdul_Hannan_youtube_kfjhot.mp3', title: 'Khasara', artist: 'Abdul Hannan', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785186335/a3fe46d5-6860-4a68-ab68-7bad42ee8805.png' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785186954/KhoslaRaghu_Bewajah_Aarzu_EP_Lyric_Visualiser_-_KhoslaRaghu_youtube_aduqfs.mp3', title: 'Bewajah', artist: 'Khosla Raghu', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785186924/7c57f6c4-966d-404b-a18a-f9995d8fc77b.png' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785187238/Dooron_Dooron_-_Paresh_Pahuja_youtube_yts2nc.mp3', title: 'Dooron Dooron', artist: 'Paresh Pahuja', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785187229/6b7f83b6-7a78-4127-bf6d-6f5e38073138.png' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785187390/Afsos_-_Anuv_Jain_youtube_f8jyax.mp3', title: 'Afsos', artist: 'Anuv Jain', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785187413/3ff8b38e-9854-41cf-aa9f-52a26841347d.png' }
+
+        {
+            id: 'parshawan',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1786284631/Parshawan_-_Harnoor_youtube_qj3mwx.mp3',
+            title: 'Parshawan',
+            artist: 'Harnoor',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1786284820/37d56d72-e0a3-461c-be73-dc9e7dc08377.png',
+            lyrics: 'lyrics/parshawan.lrc'
+        },
+
+        {
+            id: 'finding-her',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785187644/Finding_Her_-_kushagra_youtube_xqnlqf.mp3',
+            title: 'Finding Her',
+            artist: 'Kushagra',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785187631/ea18210c-31c0-457a-8218-b0c624ed5f7b.png',
+            lyrics: 'lyrics/finding-her.lrc'
+        },
+
+        {
+            id: 'iraaday',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785184328/Abdul_Hannan_Rovalio_-_Iraaday_Official_Music_Video_-_Abdul_Hannan_youtube_nogxsg.mp3',
+            title: 'Iraaday',
+            artist: 'Abdul Hannan',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785184696/b3a91fc3-80fa-43fc-b1ad-b598c4f41dbf.png',
+            lyrics: 'lyrics/irraday.lrc'
+        },
+
+        {
+            id: 'khat',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785185444/Khat_-_Navjot_Ahuja_youtube_uraaca.mp3',
+            title: 'Khat',
+            artist: 'Navjot Ahuja',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785185411/f6352879-abcd-413a-b471-6a6b58392a41.png',
+            lyrics: 'lyrics/khat.lrc'
+        },
+
+        {
+            id: 'inaam',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785185667/Inaam_-_Anuv_Jain_youtube_gtwtwo.mp3',
+            title: 'Inaam',
+            artist: 'Anuv Jain',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785185654/0217d86e-b2d4-4a7c-aa99-7d3f3d1a7722.png',
+            lyrics: 'lyrics/inaam.lrc'
+        },
+
+        {
+            id: 'khasara',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785186303/Khasara_-_Abdul_Hannan_youtube_kfjhot.mp3',
+            title: 'Khasara',
+            artist: 'Abdul Hannan',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785186335/a3fe46d5-6860-4a68-ab68-7bad42ee8805.png',
+            lyrics: 'lyrics/khasara.lrc'
+        },
+
+        {
+            id: 'bewajah',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785186954/KhoslaRaghu_Bewajah_Aarzu_EP_Lyric_Visualiser_-_KhoslaRaghu_youtube_aduqfs.mp3',
+            title: 'Bewajah',
+            artist: 'Khosla Raghu',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785186924/7c57f6c4-966d-404b-a18a-f9995d8fc77b.png'
+        },
+
+        {
+            id: 'dooron-dooron',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785187238/Dooron_Dooron_-_Paresh_Pahuja_youtube_yts2nc.mp3',
+            title: 'Dooron Dooron',
+            artist: 'Paresh Pahuja',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785187229/6b7f83b6-7a78-4127-bf6d-6f5e38073138.png',
+            lyrics: 'lyrics/dooron-dooron.lrc'
+        },
+
+        {
+            id: 'afsos',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785187390/Afsos_-_Anuv_Jain_youtube_f8jyax.mp3',
+            title: 'Afsos',
+            artist: 'Anuv Jain',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785187413/3ff8b38e-9854-41cf-aa9f-52a26841347d.png',
+            lyrics: 'lyrics/afsos.lrc'
+        }
     ],
+
     romantic: [
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352558/Marne_Se_Pehle_n3ecpc.mp3', title: 'Marne Se Pehle', artist: 'Armaan Malik', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353045/marne_wmutwh.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352568/Zaroorat_n1xzgl.mp3', title: 'Zaroorat Se Jyada', artist: 'Arijit Singh', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353049/Zaroorat_rql8tq.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352567/veham_vmamr7.mp3', title: 'Veham', artist: 'Armaan Malik', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353048/veham_nfzlrn.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352560/Barsaat_khuu0o.mp3', title: 'Barsaat', artist: 'Armaan Malik', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353041/Barsaat_oxszyv.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352547/intezaar_rudq7m.mp3', title: 'Tera Main Intezaar', artist: 'Armaan Malik', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353041/intezaar_uvm8nd.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352544/Baarishon_k7ihiu.mp3', title: 'Baarishon Mein', artist: 'Darshan Raval', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353041/Baarishon_f9kqd8.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352598/lqpz3cbbwuyds9eaqdqr.mp3', title: 'Judayiaan', artist: 'Darshan Raval', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353043/Judaiyaan_kqvlho.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352551/dil_rtcn48.mp3', title: 'Dil', artist: 'Raghav Chaitanya', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353042/dil_wnpfbf.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352555/Bhool_Jaa_h6oo1k.mp3', title: 'Bhool Jaa', artist: 'Arijit Singh', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353042/Bhool_Jaa_gdfdgg.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352553/Jeene_Bhi_De_qqxzw9.mp3', title: 'Jeene Bhi De', artist: 'Yasser Desai', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353042/Jeene_Bhi_De_llywub.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352560/Tu_Hi_Hai_piuv6p.mp3', title: 'Tu Hi Hai', artist: 'Rahul Mishra', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353047/Tu_Hi_Hai_dugsej.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352561/Naam_-_E_-_Wafa_ofiosg.mp3', title: 'Naam - E - Wafa', artist: 'Farhan Saeed', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353045/Naam_E_Wafa_tkecaf.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352553/Kya_Tujhe_Ab_Ye_Dil_Bataye_ufeixi.mp3', title: 'Kya Tujhe Ab Ye Dil Bataye', artist: 'Falak Shabbir', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353043/Kya_Tujhe_ptyb4w.jpg' }
+
+        {
+            id: 'marne-se-pehle',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352558/Marne_Se_Pehle_n3ecpc.mp3',
+            title: 'Marne Se Pehle',
+            artist: 'Armaan Malik',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353045/marne_wmutwh.jpg'
+        },
+
+        {
+            id: 'zaroorat-se-jyada',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352568/Zaroorat_n1xzgl.mp3',
+            title: 'Zaroorat Se Jyada',
+            artist: 'Arijit Singh',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353049/Zaroorat_rql8tq.jpg'
+        },
+
+        {
+            id: 'veham',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352567/veham_vmamr7.mp3',
+            title: 'Veham',
+            artist: 'Armaan Malik',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353048/veham_nfzlrn.jpg'
+        },
+
+        {
+            id: 'barsaat',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352560/Barsaat_khuu0o.mp3',
+            title: 'Barsaat',
+            artist: 'Armaan Malik',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353041/Barsaat_oxszyv.jpg'
+        },
+
+        {
+            id: 'tera-main-intezaar',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352547/intezaar_rudq7m.mp3',
+            title: 'Tera Main Intezaar',
+            artist: 'Armaan Malik',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353041/intezaar_uvm8nd.jpg'
+        },
+
+        {
+            id: 'baarishon-mein',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352544/Baarishon_k7ihiu.mp3',
+            title: 'Baarishon Mein',
+            artist: 'Darshan Raval',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353041/Baarishon_f9kqd8.jpg' 
+        },
+
+        {
+            id: 'judayiaan',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352598/lqpz3cbbwuyds9eaqdqr.mp3',
+            title: 'Judayiaan',
+            artist: 'Darshan Raval',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353043/Judaiyaan_kqvlho.jpg'
+        },
+
+        {
+            id: 'dil',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352551/dil_rtcn48.mp3',
+            title: 'Dil',
+            artist: 'Raghav Chaitanya',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353042/dil_wnpfbf.jpg'
+        },
+
+        {
+            id: 'bhool-jaa',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352555/Bhool_Jaa_h6oo1k.mp3',
+            title: 'Bhool Jaa',
+            artist: 'Arijit Singh',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353042/Bhool_Jaa_gdfdgg.jpg'
+        },
+
+        {
+            id: 'jeene-bhi-de',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352553/Jeene_Bhi_De_qqxzw9.mp3',
+            title: 'Jeene Bhi De',
+            artist: 'Yasser Desai',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353042/Jeene_Bhi_De_llywub.jpg'
+        },
+
+        {
+            id: 'tu-hi-hai',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352560/Tu_Hi_Hai_piuv6p.mp3',
+            title: 'Tu Hi Hai',
+            artist: 'Rahul Mishra',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353047/Tu_Hi_Hai_dugsej.jpg' 
+        },
+
+        {
+            id: 'naam-e-wafa',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352561/Naam_-_E_-_Wafa_ofiosg.mp3',
+            title: 'Naam - E - Wafa',
+            artist: 'Farhan Saeed',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353045/Naam_E_Wafa_tkecaf.jpg'       
+        },
+
+        {
+            id: 'kya-tujhe-ab-ye-dil-bataye',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352553/Kya_Tujhe_Ab_Ye_Dil_Bataye_ufeixi.mp3',
+            title: 'Kya Tujhe Ab Ye Dil Bataye',
+            artist: 'Falak Shabbir',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353043/Kya_Tujhe_ptyb4w.jpg'
+        }
+
     ],
-    fresh: [
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753449538/Bade_Din_Huye_-_Song_Shantanu_M_Avneet_K_Kha_Ngan_Armaan_Malik_Amaal_Mallik_Rashmi_Virag_xpcerw.mp3', title: 'Bade Din Huye', artist: 'Armaan Malik', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753449730/d71fe6f9-b71a-4885-97e4-3c5499cb3702.png' }
-    ],
+
     party: [
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352557/Pretty_hzjoog.mp3', title: 'Pretty Girl', artist: 'Maggie Lindemann', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353046/pretty_qz9rky.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352550/Kya_Kardiya_vtwu00.mp3', title: 'Kya Kardiya', artist: 'Sushant KC', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353044/kya_ojmkia.jpg' },
-        { src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352566/proyojon_myisgu.mp3', title: 'Nei Proyojon', artist: 'Muza, Xefer', image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353047/proyojon_soj1fg.jpg' }
+        {
+            id: 'pretty-girl',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352557/Pretty_hzjoog.mp3',
+            title: 'Pretty Girl',
+            artist: 'Maggie Lindemann',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353046/pretty_qz9rky.jpg'
+        },
+
+        {
+            id: 'kya-kardiya',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352550/Kya_Kardiya_vtwu00.mp3',
+            title: 'Kya Kardiya',
+            artist: 'Sushant KC',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353044/kya_ojmkia.jpg'
+        },
+
+        {
+            id: 'nei-proyojon',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352566/proyojon_myisgu.mp3',
+            title: 'Nei Proyojon',
+            artist: 'Muza, Xefer',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353047/proyojon_soj1fg.jpg'
+        }
     ],
-    favorites: [
-        { src: 'songs/favSong1.mp3', title: 'Favorite Song 1', artist: 'Fav Artist', image: 'pics/favSong1.jpg' }
-    ],
+
     chill: [
-        { src: 'songs/Zaroorat.mp3', title: 'Chill Song 1', artist: 'Chill Artist', image: 'pics/Zaroorat.jpg' }
+        {
+            id: 'chill-song-1',
+            src: 'songs/Zaroorat.mp3',
+            title: 'Chill Song 1',
+            artist: 'Chill Artist',
+            image: 'pics/Zaroorat.jpg'
+        }
     ],
+
     focus: [
-        { src: 'songs/Zaroorat.mp3', title: 'Focus Song 1', artist: 'Focus Artist', image: 'pics/Zaroorat.jpg' }
+        {
+            id: 'focus-song-1',
+            src: 'songs/Zaroorat.mp3',
+            title: 'Focus Song 1',
+            artist: 'Focus Artist',
+            image: 'pics/Zaroorat.jpg'
+        }
     ]
 };
 
@@ -192,6 +388,7 @@ const loadTrack = (trackIndex, playlistName) => {
                 currentPlaylistName = playlistName;
 
                 updatePlayingClass();
+                if (isLyricsTabActive()) refreshLyricsView();
                 updatePlayPauseButton(true);
                 updateImageAnimation();
             })
@@ -242,6 +439,7 @@ const playPrevTrack = () => {
 
 // Event Listeners
 window.addEventListener('load', () => {
+    injectLyricsTabs();
     const defaultPlaylist = 'indie'; // Set the default playlist to "indie"
     const defaultPlaylistItem = document.querySelector('.playlist-list li[data-playlist="indie"]');
 
@@ -296,6 +494,7 @@ const setupNavigationArrows = () => {
 // Audio Event Listeners
 audio.addEventListener('timeupdate', () => {
     currentTimeElem.textContent = formatDuration(audio.currentTime);
+    updateActiveLyricLine();
 
     if (audio.duration) {
         const percentage = (audio.currentTime / audio.duration) * 100;
