@@ -1,292 +1,3 @@
-/* =====================================================================
-   PINK BEATS — LYRICS MODULE
-   Fully self-contained. Load this AFTER scripts.js.
-
-   Depends on these globals already defined in scripts.js:
-     - audio                (the <audio> element)
-     - playlists             (the playlists data object)
-     - currentTrackIndex     (index of the playing track)
-     - currentPlaylistName   (name of the playing playlist)
-     - getPlaylistTracks(name) (resolves a playlist name to a track array,
-                                 including the virtual "all" playlist)
-
-   Adds:
-     - A lyrics toggle button on the right side of the sidebar nav
-     - A lyrics panel that swaps in for the track list
-     - Three modes: paste lyrics -> manual tag -> auto-scrolling sync view
-     - LRC ([mm:ss.xx]text) auto-detection for instant sync, no tagging
-     - Optional permanent lyrics: add `lrc: "..."` to any track object in
-       `playlists` and it'll be used for every visitor automatically.
-   ===================================================================== */
-
-// (() => {
-//     const LYRICS_RAW_PREFIX = 'pb_lyrics_raw:';
-//     const LYRICS_TIMED_PREFIX = 'pb_lyrics_timed:';
-
-//     let lyricsView = null;          // the injected lyrics panel element
-//     let currentSyncedLyrics = null; // cached timed lyrics for the loaded track
-//     let activeLyricsLineIndex = -1;
-//     let lastObservedSrc = null;     // used to detect track changes without
-//     // needing any hook inside scripts.js
-
-//     // ---------- storage helpers (per-browser, keyed by track URL) ----------
-//     const trackKey = (track) => new URL(track.src, window.location.href).href;
-
-//     const getStoredLyricsRaw = (key) => localStorage.getItem(LYRICS_RAW_PREFIX + key);
-//     const setStoredLyricsRaw = (key, text) => localStorage.setItem(LYRICS_RAW_PREFIX + key, text);
-//     const getStoredLyricsTimed = (key) => {
-//         const raw = localStorage.getItem(LYRICS_TIMED_PREFIX + key);
-//         return raw ? JSON.parse(raw) : null;
-//     };
-//     const setStoredLyricsTimed = (key, arr) => localStorage.setItem(LYRICS_TIMED_PREFIX + key, JSON.stringify(arr));
-
-//     const escapeHtml = (str) => String(str).replace(/[&<>"']/g, (ch) => ({
-//         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-//     }[ch]));
-
-//     // ---------- LRC parsing ----------
-//     // Parses standard LRC format: [mm:ss.xx]lyric text (one or more
-//     // timestamps per line are supported). Lines with no timestamp, or a
-//     // timestamp with no text after it (instrumental breaks), are skipped.
-//     const LRC_TAG_REGEX = /\[(\d{2}):(\d{2})(?:[.:](\d{1,2}))?\]/g;
-
-//     const parseLrc = (text) => {
-//         const result = [];
-//         text.split('\n').forEach(line => {
-//             const tags = [...line.matchAll(LRC_TAG_REGEX)];
-//             if (!tags.length) return;
-//             const content = line.replace(LRC_TAG_REGEX, '').trim();
-//             if (!content) return;
-//             tags.forEach(m => {
-//                 const minutes = parseInt(m[1], 10);
-//                 const seconds = parseInt(m[2], 10);
-//                 const frac = m[3] ? parseFloat('0.' + m[3]) : 0;
-//                 result.push({ time: minutes * 60 + seconds + frac, text: content });
-//             });
-//         });
-//         return result.sort((a, b) => a.time - b.time);
-//     };
-
-//     // ---------- current track lookup ----------
-//     const getCurrentTrack = () => {
-//         if (typeof currentTrackIndex !== 'number' || currentTrackIndex === null || !currentPlaylistName) return null;
-//         const list = playlists[currentPlaylistName] || [];
-//         return list[currentTrackIndex] || null;
-//     };
-
-//     // ---------- Mode 1: paste lyrics (plain text or LRC) ----------
-//     const renderLyricsPasteForm = (key, prefill = '') => {
-//         lyricsView.innerHTML = `
-//       <div class="lyrics-empty">
-//         <p class="lyrics-hint">Paste lyrics below — plain text, or LRC format with <code>[mm:ss.xx]</code> timestamps for instant sync.</p>
-//         <textarea id="lyrics-paste" class="lyrics-textarea" placeholder="Paste lyrics here...">${escapeHtml(prefill)}</textarea>
-//         <button id="lyrics-save-raw" class="lyrics-btn primary">Continue</button>
-//       </div>
-//     `;
-//         document.getElementById('lyrics-save-raw').addEventListener('click', () => {
-//             const text = document.getElementById('lyrics-paste').value.trim();
-//             if (!text) return;
-
-//             // Keep the original text so "Edit Lyrics" can reopen it later.
-//             setStoredLyricsRaw(key, text);
-
-//             const timed = parseLrc(text);
-//             if (timed.length) {
-//                 setStoredLyricsTimed(timed);
-//                 renderLyricsSyncView(timed);
-//                 return;
-//             }
-
-//             renderLyricsTaggingView(key, text.split('\n').filter(l => l.trim().length));
-//         });
-//     };
-
-//     // ---------- Mode 2: manual tagging ----------
-//     const renderLyricsTaggingView = (key, lines) => {
-//         let tagIndex = 0;
-//         const timestamps = [];
-
-//         lyricsView.innerHTML = `
-//       <div class="lyrics-tagger">
-//         <p class="lyrics-hint">Play the song, then tap <strong>Tag Line</strong> the instant each line starts.</p>
-//         <div class="lyrics-tag-list">
-//           ${lines.map((l, i) => `<div class="lyrics-tag-line" data-i="${i}">${escapeHtml(l)}</div>`).join('')}
-//         </div>
-//         <div class="lyrics-tag-controls">
-//           <button id="lyrics-restart" class="lyrics-btn secondary">Restart</button>
-//           <button id="lyrics-tag-btn" class="lyrics-btn primary">Tag Line</button>
-//           <button id="lyrics-undo" class="lyrics-btn secondary">Undo</button>
-//         </div>
-//       </div>
-//     `;
-
-//         const lineEls = lyricsView.querySelectorAll('.lyrics-tag-line');
-//         const highlight = () => {
-//             lineEls.forEach((el, i) => el.classList.toggle('current', i === tagIndex));
-//             if (lineEls[tagIndex]) lineEls[tagIndex].scrollIntoView({ block: 'center', behavior: 'smooth' });
-//         };
-//         highlight();
-
-//         document.getElementById('lyrics-tag-btn').addEventListener('click', () => {
-//             if (tagIndex >= lines.length) return;
-//             timestamps[tagIndex] = audio.currentTime || 0;
-//             lineEls[tagIndex].classList.add('tagged');
-//             tagIndex++;
-//             if (tagIndex >= lines.length) {
-//                 const timed = lines.map((text, i) => ({ time: timestamps[i] ?? 0, text }));
-//                 setStoredLyricsTimed(key, timed);
-//                 renderLyricsSyncView(key, timed);
-//                 return;
-//             }
-//             highlight();
-//         });
-
-//         document.getElementById('lyrics-undo').addEventListener('click', () => {
-//             if (tagIndex === 0) return;
-//             tagIndex--;
-//             lineEls[tagIndex].classList.remove('tagged');
-//             highlight();
-//         });
-
-//         document.getElementById('lyrics-restart').addEventListener('click', () => {
-//             tagIndex = 0;
-//             timestamps.length = 0;
-//             lineEls.forEach(el => el.classList.remove('tagged'));
-//             highlight();
-//         });
-//     };
-
-//     // ---------- Mode 3: synced karaoke view ----------
-//     const renderLyricsSyncView = (timed) => {
-//         currentSyncedLyrics = timed;
-//         activeLyricsLineIndex = -1;
-//         lyricsView.innerHTML = `
-//   <div class="lyrics-sync">
-//     <div class="lyrics-lines">
-//       ${timed.map((l, i) =>
-//             `<p class="lyrics-line" data-i="${i}">${escapeHtml(l.text)}</p>`
-//         ).join("")}
-//     </div>
-//   </div>
-// `;
-//         document.getElementById('lyrics-edit').addEventListener('click', () => {
-//             renderLyricsPasteForm(key, getStoredLyricsRaw(key) || timed.map(l => l.text).join('\n'));
-//         });
-//         document.getElementById('lyrics-retag').addEventListener('click', () => {
-//             renderLyricsTaggingView(key, timed.map(l => l.text));
-//         });
-//     };
-
-//     // ---------- mode dispatcher ----------
-//     // Priority: a manual override saved in this browser > lyrics shipped
-//     // permanently with the track data (track.lrc) > mid-tagging draft > blank form.
-//     const refreshLyricsView = () => {
-//         if (!lyricsView) return;
-
-//         const track = getCurrentTrack();
-
-//         if (!track) {
-//             lyricsView.innerHTML =
-//                 `<p class="lyrics-hint">No song is playing.</p>`;
-//             currentSyncedLyrics = null;
-//             return;
-//         }
-
-//         if (!track.lyrics) {
-//             lyricsView.innerHTML =
-//                 `<p class="lyrics-hint">Lyrics not available.</p>`;
-//             currentSyncedLyrics = null;
-//             return;
-//         }
-
-//         const timed = parseLrc(track.lyrics);
-
-//         if (!timed.length) {
-//             lyricsView.innerHTML =
-//                 `<p class="lyrics-hint">Invalid LRC format.</p>`;
-//             currentSyncedLyrics = null;
-//             return;
-//         }
-
-//         renderLyricsSyncView(timed);
-//     };
-
-//     const isLyricsTabActive = () =>
-//         document.querySelector('.lyrics-toggle-btn')?.classList.contains('active');
-
-//     // ---------- playback sync ----------
-//     const updateActiveLyricLine = () => {
-//         if (!currentSyncedLyrics || !lyricsView) return;
-//         const lines = lyricsView.querySelectorAll('.lyrics-line');
-//         if (!lines.length) return;
-
-//         let idx = -1;
-//         for (let i = 0; i < currentSyncedLyrics.length; i++) {
-//             if (audio.currentTime >= currentSyncedLyrics[i].time) idx = i; else break;
-//         }
-//         if (idx === activeLyricsLineIndex) return;
-//         activeLyricsLineIndex = idx;
-//         lines.forEach((el, i) => el.classList.toggle('active', i === idx));
-//         if (idx >= 0 && lines[idx]) {
-//             lines[idx].scrollIntoView({ block: 'center', behavior: 'smooth' });
-//         }
-//     };
-
-//     // Detects a track change purely by watching audio.currentSrc, so this
-//     // file never needs to be called into from scripts.js.
-//     const checkForTrackChange = () => {
-//         if (audio.currentSrc !== lastObservedSrc) {
-//             lastObservedSrc = audio.currentSrc;
-//             if (isLyricsTabActive()) refreshLyricsView();
-//         }
-//     };
-
-//     // ---------- injection ----------
-//     const injectLyricsToggle = () => {
-//         const playlistEl = document.getElementById("playlist");
-
-//         if (!playlistEl || document.querySelector(".lyrics-toggle-btn")) return;
-
-//         const btn = document.createElement("button");
-//         btn.className = "lyrics-toggle-btn";
-//         btn.setAttribute("aria-label", "Toggle lyrics for the current song");
-//         btn.innerHTML = '<i class="fas fa-align-left"></i>';
-
-//         // Add directly to the body instead of the sidebar
-//         document.body.appendChild(btn);
-
-//         const lyricsViewEl = document.createElement("div");
-//         lyricsViewEl.id = "lyrics-view";
-//         lyricsViewEl.className = "lyrics-view hidden";
-//         playlistEl.insertAdjacentElement("afterend", lyricsViewEl);
-//         lyricsView = lyricsViewEl;
-
-//         btn.addEventListener("click", () => {
-//             const isShowingLyrics = !lyricsViewEl.classList.contains("hidden");
-
-//             playlistEl.classList.toggle("hidden", !isShowingLyrics);
-//             lyricsViewEl.classList.toggle("hidden", isShowingLyrics);
-//             btn.classList.toggle("active", !isShowingLyrics);
-
-//             if (!isShowingLyrics) {
-//                 refreshLyricsView();
-//             }
-//         });
-//     };
-
-//     window.addEventListener('load', injectLyricsToggle);
-//     audio.addEventListener('timeupdate', () => {
-//         checkForTrackChange();
-//         updateActiveLyricLine();
-//     });
-//     audio.addEventListener('play', checkForTrackChange);
-
-//     window.refreshLyricsView = refreshLyricsView;
-//     window.updateActiveLyricLine = updateActiveLyricLine;
-//     window.isLyricsTabActive = isLyricsTabActive;
-//     window.injectLyricsTabs = injectLyricsToggle;
-// })();
-
 (() => {
     'use strict';
     /* =========================================================
@@ -298,6 +9,13 @@
     let activeLyricsLineIndex = -1;
     let lastObservedSrc = null;
     let lyricsRequestId = 0;
+
+    // Cache line elements once per render instead of re-querying the DOM
+    // on every `timeupdate` tick (fires up to ~60x/sec in some browsers).
+    let cachedLyricElements = [];
+
+    const LRC_FETCH_TIMEOUT_MS = 8000;
+    const MAX_FADE_DISTANCE = 4;
 
     const LRC_TAG_REGEX =
         /\[(\d{2}):(\d{2})(?:[.:](\d{1,2}))?\]/g;
@@ -321,6 +39,8 @@
 
         lines.forEach((line) => {
 
+            // Skip pure metadata tags like [ar:], [ti:], [al:], [offset:]
+            // that don't carry a timestamp we can use.
             const timestamps = [
                 ...line.matchAll(LRC_TAG_REGEX)
             ];
@@ -420,7 +140,37 @@
 
 
     /* =========================================================
-       Load LRC File
+       Toast (lightweight error notification)
+       ========================================================= */
+
+    let toastTimeoutId = null;
+
+    const showToast = (message) => {
+
+        let toastEl = document.querySelector('.toast');
+
+        if (!toastEl) {
+            toastEl = document.createElement('div');
+            toastEl.className = 'toast';
+            toastEl.setAttribute('role', 'status');
+            toastEl.setAttribute('aria-live', 'polite');
+            document.body.appendChild(toastEl);
+        }
+
+        toastEl.textContent = message;
+        toastEl.classList.add('visible');
+
+        clearTimeout(toastTimeoutId);
+        toastTimeoutId = setTimeout(() => {
+            toastEl.classList.remove('visible');
+        }, 3500);
+    };
+
+    window.showToast = showToast;
+
+
+    /* =========================================================
+       Load LRC File (with timeout)
        ========================================================= */
 
     const loadLyrics = async (track) => {
@@ -429,13 +179,19 @@
             return null;
         }
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(
+            () => controller.abort(),
+            LRC_FETCH_TIMEOUT_MS
+        );
 
         try {
 
             const response = await fetch(
                 track.lyrics,
                 {
-                    cache: 'no-cache'
+                    cache: 'no-cache',
+                    signal: controller.signal
                 }
             );
 
@@ -471,18 +227,29 @@
 
         } catch (error) {
 
-            console.error(
-                `Failed to load lyrics for "${track.title}"`,
-                error
-            );
+            if (error.name === 'AbortError') {
+                console.error(
+                    `Timed out loading lyrics for "${track.title}"`
+                );
+                showToast('Lyrics took too long to load.');
+            } else {
+                console.error(
+                    `Failed to load lyrics for "${track.title}"`,
+                    error
+                );
+                showToast('Couldn\u2019t load lyrics for this track.');
+            }
 
             return null;
+
+        } finally {
+            clearTimeout(timeoutId);
         }
     };
 
 
     /* =========================================================
-       Render Loading State
+       Render Loading State (skeleton)
        ========================================================= */
 
     const renderLoadingState = () => {
@@ -491,13 +258,16 @@
             return;
         }
 
+        cachedLyricElements = [];
 
         lyricsView.innerHTML = `
-            <div class="lyrics-empty">
-                <p class="lyrics-hint">
-                    Loading lyrics...
-                </p>
+            <div class="lyrics-skeleton" aria-hidden="true">
+                <div class="lyrics-skeleton-bar w2"></div>
+                <div class="lyrics-skeleton-bar w1"></div>
+                <div class="lyrics-skeleton-bar w3"></div>
+                <div class="lyrics-skeleton-bar w4"></div>
             </div>
+            <p class="lyrics-hint" style="text-align:center;">Loading lyrics&hellip;</p>
         `;
 
     };
@@ -517,7 +287,7 @@
         lyricsView.innerHTML = `
             <div class="lyrics-empty">
                 <p class="lyrics-hint">
-                    Lyrics not available.
+                    No synced lyrics for this track yet.
                 </p>
             </div>
         `;
@@ -526,6 +296,8 @@
         currentSyncedLyrics = null;
 
         activeLyricsLineIndex = -1;
+
+        cachedLyricElements = [];
 
     };
 
@@ -557,32 +329,58 @@
         lyricsView.innerHTML = `
             <div class="lyrics-sync">
 
-                <div class="lyrics-lines">
+                <div class="lyrics-lines" role="region" aria-label="Synced lyrics" aria-live="off">
 
                     ${lyrics.map(
-            (line, index) => `
+                        (line, index) => `
                             <p
                                 class="lyrics-line"
                                 data-index="${index}"
+                                role="button"
+                                tabindex="0"
+                                aria-label="Jump to lyric: ${escapeHtml(line.text)}"
                             >
                                 ${escapeHtml(line.text)}
                             </p>
                         `
-        ).join('')}
+                    ).join('')}
 
                 </div>
 
             </div>
         `;
 
-        // in renderLyrics, after building innerHTML
-        lyricsView.querySelectorAll('.lyrics-line').forEach((el, i) => {
-            el.addEventListener('click', () => {
-                audio.currentTime = lyrics[i].time;
+        // Cache the line elements once per render.
+        cachedLyricElements = Array.from(
+            lyricsView.querySelectorAll('.lyrics-line')
+        );
+
+        // Tap-to-seek: click or keyboard-activate a line to jump there.
+        cachedLyricElements.forEach((element, index) => {
+
+            const jumpToLine = () => {
+                if (typeof audio === 'undefined' || !audio) return;
+                audio.currentTime = lyrics[index].time;
+                if (audio.paused) {
+                    audio.play().catch(() => {
+                        /* ignore autoplay rejection here; user just clicked */
+                    });
+                }
                 updateActiveLyricLine();
+            };
+
+            element.addEventListener('click', jumpToLine);
+
+            element.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    jumpToLine();
+                }
             });
+
         });
-        // updateActiveLyricLine();
+
+        updateActiveLyricLine();
 
     };
 
@@ -607,6 +405,8 @@
          */
 
         if (!track) {
+
+            cachedLyricElements = [];
 
             lyricsView.innerHTML = `
                 <div class="lyrics-empty">
@@ -766,13 +566,7 @@
         }
 
 
-        const lyricElements =
-            lyricsView.querySelectorAll(
-                '.lyrics-line'
-            );
-
-
-        if (!lyricElements.length) {
+        if (!cachedLyricElements.length) {
             return;
         }
 
@@ -805,27 +599,66 @@
 
 
         /*
-         * Update active class.
+         * Update active class + distance-based fade/blur,
+         * so lines further from the active one recede visually
+         * (Spotify/Apple Music style karaoke feel).
          */
 
-        lyricElements.forEach((el, index) => {
-            const distance = Math.abs(index - activeIndex);
-            el.classList.toggle('active', index === activeIndex);
-            el.style.opacity = distance === 0 ? 1 : Math.max(0.45, 1 - distance * 0.2);
-            el.style.filter = distance === 0 ? 'blur(0px)' : `blur(${Math.min(distance, 3) * 0.3}px)`;
-        });
+        cachedLyricElements.forEach(
+            (element, index) => {
+
+                const isActive = index === activeIndex;
+
+                element.classList.toggle('active', isActive);
+
+                if (isActive) {
+                    element.style.opacity = '';
+                    element.style.filter = '';
+                    return;
+                }
+
+                const distance = activeIndex < 0
+                    ? 1
+                    : Math.abs(index - activeIndex);
+
+                const clampedDistance = Math.min(distance, MAX_FADE_DISTANCE);
+                const opacity = Math.max(0.18, 1 - clampedDistance * 0.22);
+                const blur = Math.min(clampedDistance, 3) * 0.5;
+
+                element.style.opacity = String(opacity);
+                element.style.filter = blur > 0 ? `blur(${blur}px)` : '';
+
+            }
+        );
+
 
         /*
-         * Auto-scroll active lyric
-         * to the center of the lyrics panel.
+         * Auto-scroll active lyric to the center of the lyrics
+         * panel, calculated manually via offsets rather than
+         * scrollIntoView() — more reliable across mobile Safari
+         * with nested scroll containers.
          */
 
+        if (
+            activeIndex >= 0 &&
+            cachedLyricElements[activeIndex]
+        ) {
 
-        if (activeIndex >= 0 && lyricElements[activeIndex]) {
-            const el = lyricElements[activeIndex];
+            const activeElement = cachedLyricElements[activeIndex];
             const container = lyricsView.querySelector('.lyrics-lines');
-            const targetScroll = el.offsetTop - (container.clientHeight / 2) + (el.clientHeight / 2);
-            container.scrollTo({ top: targetScroll, behavior: 'smooth' });
+
+            if (container) {
+                const targetScroll =
+                    activeElement.offsetTop -
+                    (container.clientHeight / 2) +
+                    (activeElement.clientHeight / 2);
+
+                container.scrollTo({
+                    top: Math.max(0, targetScroll),
+                    behavior: 'smooth'
+                });
+            }
+
         }
 
     };
@@ -887,6 +720,8 @@
 
         activeLyricsLineIndex = -1;
 
+        cachedLyricElements = [];
+
 
         /*
          * Load lyrics only when the
@@ -945,12 +780,14 @@
 
         button.setAttribute(
             'aria-label',
-            'Toggle lyrics for the current song'
+            'Show lyrics for the current song'
         );
+
+        button.setAttribute('aria-pressed', 'false');
 
 
         button.innerHTML =
-            '<i class="fas fa-align-left"></i>';
+            '<i class="fas fa-align-left" aria-hidden="true"></i>';
 
 
         document.body.appendChild(
@@ -974,6 +811,8 @@
 
         lyricsViewElement.className =
             'lyrics-view hidden';
+
+        lyricsViewElement.setAttribute('aria-live', 'off');
 
 
         /*
@@ -1034,9 +873,17 @@
                  * Button active state.
                  */
 
+                const nowActive = !showingLyrics;
+
                 button.classList.toggle(
                     'active',
-                    !showingLyrics
+                    nowActive
+                );
+
+                button.setAttribute('aria-pressed', String(nowActive));
+                button.setAttribute(
+                    'aria-label',
+                    nowActive ? 'Hide lyrics' : 'Show lyrics for the current song'
                 );
 
 

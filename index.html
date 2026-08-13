@@ -10,9 +10,18 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="responsive.css" />
-  <link rel="stylesheet" href="lrics.css" />  
+  <link rel="stylesheet" href="lrics.css" />
   <!-- Google Fonts - Modern Selection -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- PWA: enables "Add to Home Screen" installability, which is what
+       gives reliable background/lock-screen audio on mobile, especially iOS -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1e1219" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Pink Beats" />
 </head>
 
 <body>
@@ -64,27 +73,27 @@
       </div>
       <div class="controls-and-timer">
         <div class="buttons-container">
-          <button id="shuffle-btn" class="control-btn">
+          <button id="shuffle-btn" class="control-btn" aria-label="Toggle shuffle" aria-pressed="false">
             <i class="fas fa-random"></i>
           </button>
-          <button id="prev-btn" class="control-btn">
+          <button id="prev-btn" class="control-btn" aria-label="Previous track">
             <i class="fas fa-step-backward"></i>
           </button>
-          <button id="play-pause-btn" class="control-btn">
+          <button id="play-pause-btn" class="control-btn" aria-label="Play" aria-pressed="false">
             <i class="fa-solid fa-play"></i>
             <i class="fa-solid fa-pause"></i>
           </button>
-          <button id="next-btn" class="control-btn">
+          <button id="next-btn" class="control-btn" aria-label="Next track">
             <i class="fas fa-step-forward"></i>
           </button>
-          <button id="loop-btn" class="control-btn">
+          <button id="loop-btn" class="control-btn" aria-label="Toggle loop" aria-pressed="false">
             <i class="fas fa-redo"></i>
           </button>
         </div>
         <div class="seek-container">
           <div class="time-info">
             <span id="current-time">00:00</span>
-            <input type="range" id="seek-bar" value="0" class="seek-bar" />
+            <input type="range" id="seek-bar" value="0" min="0" max="100" class="seek-bar" aria-label="Seek" />
             <span id="duration-time">11:11</span>
           </div>
         </div>
@@ -95,7 +104,7 @@
       <!-- Volume Control -->
       <div class="volume-control">
         <i class="fas fa-volume-up volume-icon"></i>
-        <input type="range" id="volume-bar" value="1" min="0" max="1" step="0.01" class="volume-bar vertical" />
+        <input type="range" id="volume-bar" value="1" min="0" max="1" step="0.01" class="volume-bar vertical" aria-label="Volume" />
       </div>
     </div>
   </div>
@@ -105,6 +114,15 @@
   <script src="script.js"></script>
   <script src="lyrics.js"></script>
   <script src="https://kit.fontawesome.com/8cb620ace4.js" crossorigin="anonymous"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch((err) => {
+          console.warn('Service worker registration failed:', err);
+        });
+      });
+    }
+  </script>
 </body>
 
 </html>

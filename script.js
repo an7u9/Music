@@ -24,6 +24,15 @@ let tracks = [];
 let isLooping = false;
 let isShuffling = false;
 
+// Pool of metadata-probe Audio() instances, keyed by track src, so we
+// don't recreate/leak a new Audio() object every time a playlist is loaded.
+const metadataProbeCache = new Map();
+
+const STORAGE_KEY = 'pinkbeats:prefs';
+
+// Guard against next/prev being spammed and racing multiple play() promises.
+let isTrackChangeInFlight = false;
+
 // Playlists data
 
 const playlists = {
@@ -44,7 +53,7 @@ const playlists = {
             src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1785187644/Finding_Her_-_kushagra_youtube_xqnlqf.mp3',
             title: 'Finding Her',
             artist: 'Kushagra',
-            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785187631/ea18210c-31c0-457a-8218-b0c624ed5f7b.png',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1785184696/b3a91fc3-80fa-43fc-b1ad-b598c4f41dbf.png',
             lyrics: 'lyrics/finding-her.lrc'
         },
 
@@ -158,7 +167,7 @@ const playlists = {
             src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352544/Baarishon_k7ihiu.mp3',
             title: 'Baarishon Mein',
             artist: 'Darshan Raval',
-            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353041/Baarishon_f9kqd8.jpg' 
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353041/Baarishon_f9kqd8.jpg'
         },
 
         {
@@ -198,7 +207,7 @@ const playlists = {
             src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352560/Tu_Hi_Hai_piuv6p.mp3',
             title: 'Tu Hi Hai',
             artist: 'Rahul Mishra',
-            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353047/Tu_Hi_Hai_dugsej.jpg' 
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353047/Tu_Hi_Hai_dugsej.jpg'
         },
 
         {
@@ -206,7 +215,7 @@ const playlists = {
             src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1753352561/Naam_-_E_-_Wafa_ofiosg.mp3',
             title: 'Naam - E - Wafa',
             artist: 'Farhan Saeed',
-            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353045/Naam_E_Wafa_tkecaf.jpg'       
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1753353045/Naam_E_Wafa_tkecaf.jpg'
         },
 
         {
@@ -301,10 +310,14 @@ const updatePlayPauseButton = (playing) => {
         playPauseBtn.querySelector('.fa-play').style.display = 'none';
         playPauseBtn.querySelector('.fa-pause').style.display = 'inline-block';
         playPauseBtn.classList.add('active');
+        playPauseBtn.setAttribute('aria-pressed', 'true');
+        playPauseBtn.setAttribute('aria-label', 'Pause');
     } else {
         playPauseBtn.querySelector('.fa-play').style.display = 'inline-block';
         playPauseBtn.querySelector('.fa-pause').style.display = 'none';
         playPauseBtn.classList.remove('active');
+        playPauseBtn.setAttribute('aria-pressed', 'false');
+        playPauseBtn.setAttribute('aria-label', 'Play');
     }
 };
 
@@ -312,12 +325,197 @@ const updateVolumeIcon = (volume) => {
     if (!volumeIcon) return;
 
     if (volume === 0) {
-        volumeIcon.className = 'fas fa-volume-mute';
+        volumeIcon.className = 'fas fa-volume-mute volume-icon';
     } else if (volume < 0.5) {
-        volumeIcon.className = 'fas fa-volume-down';
+        volumeIcon.className = 'fas fa-volume-down volume-icon';
     } else {
-        volumeIcon.className = 'fas fa-volume-up';
+        volumeIcon.className = 'fas fa-volume-up volume-icon';
     }
+};
+
+/* =========================================================
+   Preferences persistence (volume / loop / shuffle)
+   ========================================================= */
+
+const loadPrefs = () => {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch (error) {
+        console.warn('Could not read saved preferences', error);
+        return null;
+    }
+};
+
+const savePrefs = () => {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            volume: audio.volume,
+            isLooping,
+            isShuffling
+        }));
+    } catch (error) {
+        console.warn('Could not save preferences', error);
+    }
+};
+
+/* =========================================================
+   Metadata probe pooling
+   ========================================================= */
+
+const getTrackDuration = (track) =>
+    new Promise((resolve) => {
+
+        if (metadataProbeCache.has(track.src)) {
+            const cached = metadataProbeCache.get(track.src);
+            if (cached.duration && !Number.isNaN(cached.duration)) {
+                resolve(cached.duration);
+                return;
+            }
+        }
+
+        const probe = new Audio();
+        probe.preload = 'metadata';
+        probe.src = track.src;
+
+        const onLoaded = () => {
+            metadataProbeCache.set(track.src, { duration: probe.duration });
+            probe.removeEventListener('loadedmetadata', onLoaded);
+            probe.removeEventListener('error', onError);
+            resolve(probe.duration);
+        };
+
+        const onError = () => {
+            probe.removeEventListener('loadedmetadata', onLoaded);
+            probe.removeEventListener('error', onError);
+            resolve(null);
+        };
+
+        probe.addEventListener('loadedmetadata', onLoaded);
+        probe.addEventListener('error', onError);
+    });
+
+/* =========================================================
+   Media Session API
+   ---------------------------------------------------------
+   This is what gives you:
+     1. Lock-screen / notification-shade playback controls with
+        title, artist and artwork.
+     2. Far more reliable background playback — without a populated
+        Media Session, mobile Chrome/Android has no reason to treat
+        the tab as an active media session and will more aggressively
+        suspend the page once the screen locks, which is why "next
+        track" silently stops firing. Once metadata + action handlers
+        are set, the browser/OS shows a persistent media notification
+        and keeps the session (and JS needed to advance tracks) alive.
+   iOS Safari: this also works, but a plain browser tab still gets
+   suspended in the background more aggressively than an installed
+   PWA. See the manifest.json / "Add to Home Screen" setup for that.
+   ========================================================= */
+
+const isMediaSessionSupported = 'mediaSession' in navigator;
+
+const updateMediaSessionMetadata = (track) => {
+    if (!isMediaSessionSupported || !track) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+        title: track.title,
+        artist: track.artist,
+        album: currentPlaylistName
+            ? currentPlaylistName.charAt(0).toUpperCase() + currentPlaylistName.slice(1)
+            : '',
+        artwork: track.image
+            ? [
+                { src: track.image, sizes: '96x96', type: 'image/png' },
+                { src: track.image, sizes: '256x256', type: 'image/png' },
+                { src: track.image, sizes: '512x512', type: 'image/png' }
+              ]
+            : []
+    });
+};
+
+const updateMediaSessionPlaybackState = (playing) => {
+    if (!isMediaSessionSupported) return;
+    navigator.mediaSession.playbackState = playing ? 'playing' : 'paused';
+};
+
+// Lets the lock screen show/update the scrub bar position.
+const updateMediaSessionPositionState = () => {
+    if (!isMediaSessionSupported || !navigator.mediaSession.setPositionState) return;
+    if (!audio.duration || Number.isNaN(audio.duration)) return;
+
+    try {
+        navigator.mediaSession.setPositionState({
+            duration: audio.duration,
+            playbackRate: audio.playbackRate || 1,
+            position: Math.min(audio.currentTime, audio.duration)
+        });
+    } catch (error) {
+        // setPositionState can throw if called with stale/invalid values
+        // mid-track-change; safe to ignore.
+    }
+};
+
+const setupMediaSessionHandlers = () => {
+    if (!isMediaSessionSupported) return;
+
+    navigator.mediaSession.setActionHandler('play', () => {
+        audio.play()
+            .then(() => {
+                updatePlayPauseButton(true);
+                updateImageAnimation();
+            })
+            .catch((error) => console.error('Media session play failed:', error));
+    });
+
+    navigator.mediaSession.setActionHandler('pause', () => {
+        audio.pause();
+        updatePlayPauseButton(false);
+        updateImageAnimation();
+    });
+
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+        playPrevTrack();
+    });
+
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+        playNextTrack();
+    });
+
+    // Optional but standard: 10s skip via lock-screen skip buttons.
+    navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+        const skip = details.seekOffset || 10;
+        audio.currentTime = Math.max(0, audio.currentTime - skip);
+        updateMediaSessionPositionState();
+    });
+
+    navigator.mediaSession.setActionHandler('seekforward', (details) => {
+        const skip = details.seekOffset || 10;
+        if (audio.duration) {
+            audio.currentTime = Math.min(audio.duration, audio.currentTime + skip);
+        }
+        updateMediaSessionPositionState();
+    });
+
+    try {
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+            if (details.seekTime !== undefined && audio.duration) {
+                audio.currentTime = details.seekTime;
+                updateMediaSessionPositionState();
+            }
+        });
+    } catch (error) {
+        // 'seekto' isn't supported everywhere; harmless if it throws.
+    }
+
+    navigator.mediaSession.setActionHandler('stop', () => {
+        audio.pause();
+        audio.currentTime = 0;
+        updatePlayPauseButton(false);
+        updateImageAnimation();
+        updateMediaSessionPlaybackState(false);
+    });
 };
 
 // Core Functionality
@@ -344,6 +542,8 @@ const loadPlaylist = (playlistName) => {
         li.setAttribute('data-playlist', playlistName);
         li.setAttribute('data-index', index);
         li.className = 'track-details';
+        li.setAttribute('role', 'button');
+        li.setAttribute('tabindex', '0');
         li.innerHTML = `
       <span class="track-title">${track.title}</span>
       <span class="artist">${track.artist}</span>
@@ -356,15 +556,25 @@ const loadPlaylist = (playlistName) => {
 
         playlist.appendChild(li);
 
-        const audioTrack = new Audio();
-        audioTrack.preload = 'metadata'; // fetch only metadata (duration), not the whole file
-        audioTrack.src = track.src;
-        audioTrack.addEventListener('loadedmetadata', () => {
-            li.querySelector('.track-duration').textContent = formatDuration(audioTrack.duration);
+        // Reuse a cached metadata probe instead of creating + leaking a
+        // brand new Audio() instance every time the playlist is (re)loaded.
+        getTrackDuration(track).then((duration) => {
+            const durationElem = li.querySelector('.track-duration');
+            if (durationElem) {
+                durationElem.textContent = duration
+                    ? formatDuration(duration)
+                    : '--:--';
+            }
         });
 
-        li.addEventListener('click', () => {
-            playTrackFromPlaylist(index, playlistName);
+        const activate = () => playTrackFromPlaylist(index, playlistName);
+
+        li.addEventListener('click', activate);
+        li.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                activate();
+            }
         });
     });
 };
@@ -378,22 +588,39 @@ const loadTrack = (trackIndex, playlistName) => {
     if (trackIndex >= 0 && trackIndex < playlistTracks.length) {
         const selectedTrack = playlistTracks[trackIndex];
 
+        // Update track/UI metadata immediately so the interface never
+        // shows stale info even if playback subsequently fails.
+        trackTitle.textContent = selectedTrack.title;
+        trackArtist.textContent = selectedTrack.artist;
+        trackImage.src = selectedTrack.image;
+        currentTrackIndex = trackIndex;
+        currentPlaylistName = playlistName;
+
         audio.src = selectedTrack.src;
+
+        updateMediaSessionMetadata(selectedTrack);
+
+        isTrackChangeInFlight = true;
+
         audio.play()
             .then(() => {
-                trackTitle.textContent = selectedTrack.title;
-                trackArtist.textContent = selectedTrack.artist;
-                trackImage.src = selectedTrack.image;
-                currentTrackIndex = trackIndex;
-                currentPlaylistName = playlistName;
-
                 updatePlayingClass();
                 if (isLyricsTabActive()) refreshLyricsView();
                 updatePlayPauseButton(true);
                 updateImageAnimation();
+                updateMediaSessionPlaybackState(true);
             })
             .catch(error => {
                 console.error('Error playing track:', error);
+                updatePlayPauseButton(false);
+                if (typeof showToast === 'function') {
+                    showToast(`Couldn\u2019t play "${selectedTrack.title}". Tap play to retry.`);
+                } else {
+                    console.warn('Playback failed and no toast handler was available.');
+                }
+            })
+            .finally(() => {
+                isTrackChangeInFlight = false;
             });
     }
 };
@@ -405,16 +632,23 @@ const playTrackFromPlaylist = (trackIndex, playlistName) => {
         loadTrack(trackIndex, playlistName);
     } else {
         if (audio.paused) {
-            audio.play();
+            audio.play()
+                .then(() => updateMediaSessionPlaybackState(true))
+                .catch(error => console.error('Error resuming track:', error));
             updatePlayPauseButton(true);
         } else {
             audio.pause();
             updatePlayPauseButton(false);
+            updateMediaSessionPlaybackState(false);
         }
     }
 };
 
 const playNextTrack = () => {
+    // Debounce: ignore rapid repeat clicks while a track change is
+    // already resolving, to avoid racing multiple play() promises.
+    if (isTrackChangeInFlight) return;
+
     const playlistTracks = playlists[currentPlaylistName] || [];
     if (playlistTracks.length === 0) return;
 
@@ -430,6 +664,8 @@ const playNextTrack = () => {
 };
 
 const playPrevTrack = () => {
+    if (isTrackChangeInFlight) return;
+
     const playlistTracks = playlists[currentPlaylistName] || [];
     if (playlistTracks.length === 0) return;
 
@@ -440,6 +676,7 @@ const playPrevTrack = () => {
 // Event Listeners
 window.addEventListener('load', () => {
     injectLyricsTabs();
+    setupMediaSessionHandlers();
     const defaultPlaylist = 'indie'; // Set the default playlist to "indie"
     const defaultPlaylistItem = document.querySelector('.playlist-list li[data-playlist="indie"]');
 
@@ -453,6 +690,25 @@ window.addEventListener('load', () => {
 
     // Set up navigation arrows for tablet view
     setupNavigationArrows();
+
+    // Restore saved preferences (volume / loop / shuffle).
+    const prefs = loadPrefs();
+    if (prefs) {
+        if (typeof prefs.volume === 'number' && !Number.isNaN(prefs.volume)) {
+            audio.volume = prefs.volume;
+            volumeBar.value = prefs.volume;
+        }
+        if (prefs.isLooping) {
+            isLooping = true;
+            loopBtn.classList.add('active');
+            loopBtn.setAttribute('aria-pressed', 'true');
+        }
+        if (prefs.isShuffling) {
+            isShuffling = true;
+            shuffleBtn.classList.add('active');
+            shuffleBtn.setAttribute('aria-pressed', 'true');
+        }
+    }
 
     // Initialize volume icon
     updateVolumeIcon(volumeBar.value);
@@ -510,19 +766,34 @@ audio.addEventListener('loadedmetadata', () => {
 audio.addEventListener('ended', () => {
     if (isLooping) {
         audio.currentTime = 0;
-        audio.play();
+        audio.play().catch(error => console.error('Error looping track:', error));
     } else {
         playNextTrack();
     }
+});
+
+audio.addEventListener('error', () => {
+    if (typeof showToast === 'function') {
+        showToast('Something went wrong loading this track.');
+    }
+    updatePlayPauseButton(false);
 });
 
 // Control Button Listeners
 playPauseBtn.addEventListener('click', () => {
     if (audio.src) {
         if (audio.paused) {
-            audio.play();
-            updatePlayPauseButton(true);
-            updateImageAnimation();
+            audio.play()
+                .then(() => {
+                    updatePlayPauseButton(true);
+                    updateImageAnimation();
+                })
+                .catch(error => {
+                    console.error('Error playing track:', error);
+                    if (typeof showToast === 'function') {
+                        showToast('Playback couldn\u2019t start.');
+                    }
+                });
         } else {
             audio.pause();
             updatePlayPauseButton(false);
@@ -537,13 +808,28 @@ audio.addEventListener("play", () => {
     updatePlayPauseButton(true);
     updatePlayingClass();
     updateImageAnimation();
+    updateMediaSessionPlaybackState(true);
 });
 
 audio.addEventListener("pause", () => {
     updatePlayPauseButton(false);
     updatePlayingClass();
     updateImageAnimation();
+    updateMediaSessionPlaybackState(false);
 });
+
+// Keep the lock-screen scrub bar roughly in sync. Throttled to ~1/sec
+// since timeupdate can fire far more often than the lock screen needs.
+let lastPositionStateUpdate = 0;
+audio.addEventListener('timeupdate', () => {
+    const now = Date.now();
+    if (now - lastPositionStateUpdate > 1000) {
+        lastPositionStateUpdate = now;
+        updateMediaSessionPositionState();
+    }
+});
+
+audio.addEventListener('loadedmetadata', updateMediaSessionPositionState);
 
 nextBtn.addEventListener('click', playNextTrack);
 prevBtn.addEventListener('click', playPrevTrack);
@@ -552,12 +838,16 @@ prevBtn.addEventListener('click', playPrevTrack);
 loopBtn.addEventListener('click', () => {
     isLooping = !isLooping;
     loopBtn.classList.toggle('active', isLooping);
+    loopBtn.setAttribute('aria-pressed', String(isLooping));
+    savePrefs();
 });
 
 // Shuffle Button
 shuffleBtn.addEventListener('click', () => {
     isShuffling = !isShuffling;
     shuffleBtn.classList.toggle('active', isShuffling);
+    shuffleBtn.setAttribute('aria-pressed', String(isShuffling));
+    savePrefs();
 });
 
 // Seek Bar
@@ -569,6 +859,7 @@ const updateSeekBarBackground = (value) => {
 };
 
 seekBar.addEventListener('input', () => {
+    if (!audio.duration) return;
     const seekTime = (seekBar.value / 100) * audio.duration;
     audio.currentTime = seekTime;
     updateSeekBarBackground(seekBar.value);
@@ -578,6 +869,7 @@ seekBar.addEventListener('input', () => {
 volumeBar.addEventListener('input', () => {
     audio.volume = volumeBar.value;
     updateVolumeIcon(volumeBar.value);
+    savePrefs();
 });
 
 // Playlist Selection
@@ -593,4 +885,65 @@ document.querySelectorAll('.playlist-list li').forEach(item => {
             }
         }
     });
+
+    item.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            item.click();
+        }
+    });
+});
+
+/* =========================================================
+   Global keyboard shortcuts (standard media-player behavior)
+   - Space: play/pause
+   - ArrowRight / ArrowLeft: seek +/- 5s
+   - ArrowUp / ArrowDown: volume +/- 5%
+   Ignored while the user is typing in an input/textarea.
+   ========================================================= */
+
+document.addEventListener('keydown', (event) => {
+    const activeTag = document.activeElement?.tagName;
+    const isTypingContext = activeTag === 'INPUT' || activeTag === 'TEXTAREA' || document.activeElement?.isContentEditable;
+
+    if (isTypingContext) return;
+
+    switch (event.key) {
+        case ' ':
+        case 'Spacebar':
+            event.preventDefault();
+            playPauseBtn.click();
+            break;
+
+        case 'ArrowRight':
+            if (audio.duration) {
+                audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+            }
+            break;
+
+        case 'ArrowLeft':
+            if (audio.duration) {
+                audio.currentTime = Math.max(0, audio.currentTime - 5);
+            }
+            break;
+
+        case 'ArrowUp':
+            event.preventDefault();
+            audio.volume = Math.min(1, audio.volume + 0.05);
+            volumeBar.value = audio.volume;
+            updateVolumeIcon(audio.volume);
+            savePrefs();
+            break;
+
+        case 'ArrowDown':
+            event.preventDefault();
+            audio.volume = Math.max(0, audio.volume - 0.05);
+            volumeBar.value = audio.volume;
+            updateVolumeIcon(audio.volume);
+            savePrefs();
+            break;
+
+        default:
+            break;
+    }
 });

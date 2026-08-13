@@ -130,7 +130,7 @@
 
 /* ===== MOBILE (500px and below) ===== */
 @media (max-width: 500px) {
-  
+
   /* Override variables for mobile */
   :root {
     --music-player-height: 110px;
@@ -142,29 +142,22 @@
     width: 95%;
     max-width: 600px;
     margin-top: var(--sidebar-height);
-    /* Match the variable from main CSS */
     margin-bottom: var(--music-player-height);
-    /* Match the variable from main CSS */
     min-height: calc(100vh - var(--sidebar-height) - var(--music-player-height));
-    /* Use CSS variables */
   }
 
   .player-content {
-    
     flex-direction: column;
   }
 
   .track-image-container {
     position: absolute;
     top: -15%;
-    /* half the image height to pop it out */
     left: 50%;
     transform: translateX(-50%);
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    /* border: 4px solid #fff; */
-    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); */
     z-index: 10;
   }
 
@@ -205,7 +198,6 @@
     width: 98%;
     overflow-x: auto;
     overflow-y: hidden;
-    /* padding: 0 5px; */
   }
 
   .playlist-list {
@@ -240,9 +232,7 @@
     flex-direction: row;
     width: 95%;
     justify-content: space-between;
-    /* top right bottom left*/
     padding: 2px 2px 7px 0px;
-    
   }
 
   .track-info h2 {
@@ -267,17 +257,13 @@
   .track-title {
     font-size: 14px;
     white-space: nowrap;
-    /* ❌ No wrapping */
     overflow: hidden;
-    /* 🧼 Hide overflow */
     text-overflow: ellipsis;
   }
 
   .artist {
     white-space: nowrap;
-    /* ❌ No wrapping */
     overflow: hidden;
-    /* 🧼 Hide overflow */
     text-overflow: ellipsis;
     font-size: 10px;
   }
@@ -308,7 +294,6 @@
 
   .seek-bar::-webkit-slider-thumb {
     visibility: visible;
-    /* Make thumb visible */
     opacity: 1;
     width: 12px;
     height: 12px;
@@ -366,6 +351,5 @@
     transform: translateY(-50%);
     text-align: right;
     width: auto;
-    /* font-size remains unchanged */
   }
 }
