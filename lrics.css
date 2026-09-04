@@ -216,7 +216,7 @@
   overflow-wrap: break-word;
   word-break: break-word;
   font-family: var(--font-display, inherit);
-  font-size: clamp(14px, 4vw, 18px);
+  font-size: clamp(9px, 3vw, 14px);
   font-style: italic;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.35);
