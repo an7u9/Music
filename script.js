@@ -122,12 +122,75 @@ const playlists = {
 
     international: [
         {
-            id: 'if you love her',
+            id: 'if-you-love-her',
             src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1788492777/If_You_Love_Her_-_Forest_Blakk_youtube_gsloyj.mp3',
             title: 'If You Love Her',
             artist: 'Forest Blakk',
             image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1788492903/1d278ff5-9d5b-48fa-bf12-289f403a2e3c.png',
             lyrics: 'lyrics/if-you-love-her.lrc'
+        },
+
+        {
+            id: 'you-are-the-reason',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1788493616/You_Are_The_Reason_-_Calum_Scott_youtube_f9mgqs.mp3',
+            title: 'You Are The Reason',
+            artist: 'Calum Scott',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1788493685/25c6ee10-c5bc-48db-8c35-434ed025f61e.png',
+            lyrics: 'lyrics/youarethereason.krc'
+        },
+
+        {
+            id: 'dancing-with-your-ghost',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1788584784/Sasha_Alex_Sloan_-_Dancing_With_Your_Ghost_-_320_Kbps_gdeaii.mp3',
+            title: 'Dancing With Your Ghost',
+            artist: 'Sasha Sloan',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1788584459/3dc652f2-7f89-4465-b44b-a3e1a6f41771.png',
+            lyrics: 'lyrics/dancingghost.lrc'
+        },
+
+        {
+            id: 'little-bit-better',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1788586295/Caleb_Hearn_ROSIE_-_Little_Bit_Better_-_320_Kbps_fims57.mp3',
+            title: 'Little Bit Better',
+            artist: 'Caleb Hearn',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1788586206/unnamed_ncukgk.jpg',
+            lyrics: 'lyrics/littlebitbetter.lrc'
+        },
+
+        {
+            id: 'Dandelions',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1788493228/Dandelions_-_Ruth_B._youtube_bzfzlc.mp3',
+            title: 'Dandelions',
+            artist: 'Ruth B.',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1788493434/e9ee3455-6ae4-4570-b02b-c6565bc2dce2.png',
+            lyrics: 'lyrics/dandelions.lrc'
+        },
+
+        {
+            id: 'memories',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1788585475/Maroon_5_-_Memories_-_320_Kbps_memwbl.mp3',
+            title: 'Memories',
+            artist: 'Maroon 5',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1788585460/9f307dd8-eac5-453c-9878-b4a4539547ba.png',
+            lyrics: 'lyrics/memories.lrc'
+        },
+
+        {
+            id: 'older',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1788584988/Sasha_Alex_Sloan_-_Older_-_320_Kbps_y7hr6h.mp3',
+            title: 'Older',
+            artist: 'Sasha Alex Sloan',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1788584953/6efd858e-4529-4ca2-88d2-2deb3e3130e3.png',
+            lyrics: 'lyrics/older.lrc'
+        },
+
+        {
+            id: 'howdoisaygoodbye',
+            src: 'https://res.cloudinary.com/dyp1fmsph/video/upload/v1788585989/Dean_Lewis_-_How_Do_I_Say_Goodbye_-_320_Kbps_rz7jgd.mp3',
+            title: 'How Do I Say Goodbye',
+            artist: 'Dean Lewis',
+            image: 'https://res.cloudinary.com/dyp1fmsph/image/upload/v1788585880/unnamed_zmdlwg.jpg',
+            lyrics: 'lyrics/howdoisay.lrc'
         }
     ],
 
