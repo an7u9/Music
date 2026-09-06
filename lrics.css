@@ -1,204 +1,57 @@
+/* Add this font link to index.html's <head>, alongside the Poppins one:
+   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500&display=swap" rel="stylesheet">
+   Lora is a serif with a genuine italic cut (not faux-slanted), which
+   reads far more "lyric card" and premium than an italicized sans. */
+
 .lyrics-toggle-btn {
   position: fixed;
-  top: 50%;
-  right: 18px;
+  top: 35%;
+  right: 6px;
   transform: translateY(-50%);
-
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   background: rgba(34, 18, 27, 0.85);
   backdrop-filter: blur(14px);
-
   border: 1px solid rgba(255, 255, 255, .08);
-
   color: #fff;
   font-size: 18px;
-
-  animation: floating 3s ease-in-out infinite;
   cursor: pointer;
-
   z-index: 9999;
-
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, .35),
-    0 0 18px rgba(253, 61, 181, .18);
-
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .35), 0 0 18px rgba(253, 61, 181, .18);
   transition: all .3s ease;
 }
 
 .lyrics-toggle-btn:hover {
   transform: translateY(-50%) scale(1.08);
-  box-shadow:
-    0 10px 28px rgba(0, 0, 0, .45),
-    0 0 24px rgba(253, 61, 181, .35);
-}
-
-.lyrics-toggle-btn:active {
-  transform: translateY(-50%) scale(.92);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .45), 0 0 24px rgba(253, 61, 181, .35);
 }
 
 .lyrics-toggle-btn.active {
-  background: linear-gradient(135deg,
-      var(--gradient-start),
-      var(--gradient-end));
-
-  box-shadow:
-    0 0 18px rgba(253, 61, 181, .45),
-    0 0 36px rgba(253, 61, 181, .25);
-}
-
-@keyframes floating {
-
-  0%,
-  100% {
-    transform: translateY(-50%);
-  }
-
-  50% {
-    transform: translateY(calc(-50% - 6px));
-  }
-}
-
-.lyrics-view {
-  animation: lyrics-row-in 0.4s var(--ease-premium, ease) both;
-}
-
-@keyframes lyrics-row-in {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  box-shadow: 0 0 18px rgba(253, 61, 181, .45), 0 0 36px rgba(253, 61, 181, .25);
 }
 
 .lyrics-hint {
   color: rgba(255, 255, 255, 0.6);
   font-size: 13px;
-  line-height: 1.5;
-  margin-bottom: 12px;
-}
-
-.lyrics-hint code {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 1px 5px;
-  border-radius: 4px;
-}
-
-.lyrics-btn {
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.14));
-  background: var(--glass-bg, rgba(255, 255, 255, 0.05));
-  color: var(--text-color, #fff);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: transform 0.2s var(--ease-premium, ease), background 0.2s var(--ease-premium, ease);
-}
-
-.lyrics-btn:active {
-  transform: scale(0.95);
-}
-
-.lyrics-btn.primary {
-  background: linear-gradient(135deg, var(--gradient-start, #8C1946), var(--gradient-end, #FD3DB5));
-  border-color: transparent;
-}
-
-.lyrics-btn.small {
-  padding: 6px 14px;
-  font-size: 12px;
-}
-
-/* Paste form */
-.lyrics-textarea {
-  width: 100%;
-  min-height: 220px;
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.14));
-  background: var(--glass-bg, rgba(255, 255, 255, 0.05));
-  color: var(--text-color, #fff);
-  font-size: 14px;
-  line-height: 1.6;
-  resize: vertical;
-  margin-bottom: 12px;
-}
-
-/* Tagging mode */
-.lyrics-tag-list {
-  max-height: 45vh;
-  overflow-y: auto;
-  margin-bottom: 14px;
-  scrollbar-width: none;
-}
-
-.lyrics-tag-list::-webkit-scrollbar {
-  display: none;
-}
-
-.lyrics-tag-line {
-  padding: 10px 14px;
-  margin-bottom: 6px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 14px;
-  transition: background 0.3s var(--ease-premium, ease), color 0.3s var(--ease-premium, ease);
-}
-
-.lyrics-tag-line.tagged {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.lyrics-tag-line.current {
-  background: linear-gradient(to right, var(--gradient-start, #8C1946), var(--gradient-end, #FD3DB5));
-  color: var(--text-color, #fff);
-  font-weight: 500;
-  box-shadow: 0 0 10px var(--glow-soft, rgba(253, 61, 181, 0.3));
-}
-
-.lyrics-tag-controls {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-/* Synced karaoke view */
-.lyrics-sync {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-:root {
-  --player-height: 150px;
+  padding: 30px 20px;
 }
 
 .lyrics-lines {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
   width: 98vw;
-  max-width: 98vw;
-  height: 100vh;
-  max-height: 100vh;
+  max-width: 700px;
+  max-height: 80vh;
   overflow-y: auto;
   overflow-x: hidden;
-  text-align: center;
-  padding:
-    20px
-    0
-    calc(var(--player-height, 110px) + 80px);
+  padding: 30vh 0;      /* top/bottom padding lets first/last lines reach center */
   scrollbar-width: none;
-  scroll-behavior: smooth;
   box-sizing: border-box;
 }
 
@@ -207,61 +60,69 @@
 }
 
 .lyrics-line {
-  width: 100%;
-  max-width: min(90vw, 700px);
+  max-width: 90vw;
   margin: 0 auto;
-  padding: 15px 12px;
-  text-align: center;
+  padding: 14px 16px;
+
+  text-align: left;
   white-space: normal;
   overflow-wrap: break-word;
-  word-break: break-word;
-  font-family: var(--font-display, inherit);
-  font-size: clamp(9px, 3vw, 14px);
-  font-style: italic;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.35);
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  filter: blur(0px);
+  box-sizing: border-box;
+
   cursor: pointer;
-  transition: color .4s var(--ease-premium, ease),
-              transform .4s var(--ease-premium, ease),
-              text-shadow .4s var(--ease-premium, ease),
-              filter .4s var(--ease-premium, ease),
-              opacity .4s var(--ease-premium, ease);
+  border-radius: 10px;
+
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(14px, 3vw, 18px);
+  letter-spacing: -0.15px;
+
+  color: rgba(255, 255, 255, 0.35);
+  opacity: 0.55;
+
+  transition:
+    color 0.5s ease,
+    opacity 0.5s ease,
+    background 0.3s ease;
 }
 
+.lyrics-text {
+  display: inline-block;
+
+  font-weight: 600;
+
+  transform: scale(1);
+  transform-origin: left center;
+
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    font-weight 0.3s ease,
+    text-shadow 0.5s ease;
+}
+
+.lyrics-line:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Requirement: active line zooms in and changes color */
 .lyrics-line.active {
   color: var(--text-color, #fff);
-  -webkit-line-clamp: unset;   /* let the active line show in full */
-  transform: scale(1.06);
-  text-shadow: 0 0 16px var(--glow-strong, rgba(253, 61, 181, .6));
+  opacity: 1;
+  font-weight: 700;
+  letter-spacing: 0.10px;
+  text-shadow:
+    0 0 16px rgba(253, 61, 181, 0.6);
 }
 
-/* Mobile */
-/* @media (max-width: 500px) {
-  .playlist-list-container {
-    padding-right: 44px;
-  } */
-@media (max-width: 500px) {
-  .lyrics-toggle-btn {
-    position: fixed;
-    top: 25%;
-    right: 12px;
-    transform: translateY(-50%);
+.lyrics-line.active .lyrics-text {
+  transform: scale(1.08);
+  font-weight: 700;
 
-    width: 42px;
-    height: 42px;
-
-    z-index: 99999;
-  }
+  text-shadow: 0 0 16px rgba(253, 61, 181, 0.6);
 }
 
-.lyrics-toggle-btn {
-  width: 32px;
-  height: 32px;
-  right: 5px;
-  font-size: 13px;
+/* Immediate neighbors get a light dim, everything else fades further —
+   cheap two-tier version of a distance fade, keeps the panel focused
+   on the active line without extra per-line JS math. */
+.lyrics-line:not(.active) {
+  opacity: 0.55;
 }

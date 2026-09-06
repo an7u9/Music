@@ -110,7 +110,7 @@ body {
 .playlist-item:hover,
 .playlist-item.active {
   transform: translateY(-1px);
-  background: linear-gradient(135deg, rgba(140, 25, 69, 0.526) 0%, rgba(253, 61, 179, 0.471) 100%);
+  background: linear-gradient(135deg, #2e0f21 0%, #500b2b 50%, #690238 80%);
   box-shadow: 0 6px 15px rgba(140, 25, 70, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
